@@ -32,6 +32,17 @@ function ata_importer_afficher_progression($courant, $total) {
 	}
 }
 
+/**
+ * Supprimer les caractères accentués
+ * https://www.php.net/manual/fr/function.mb-ereg-replace.php#123589
+ *
+ * @param  string $texte
+ * @return string
+ */
+function ata_importer_supprimer_accents($texte){
+	$transliterator = Transliterator::create("NFD; [:Nonspacing Mark:] Remove; NFC;");
+	return $transliterator->transliterate($texte);
+}
 
 /*include_spip('inc/flock');
 include_spip('inc/invalideur');

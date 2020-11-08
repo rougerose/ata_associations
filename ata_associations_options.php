@@ -19,6 +19,11 @@ if (!defined('_DIR_IMPORTS_ATA')) {
 }
 
 // Type de coordonnées par défaut
-// if (!defined('_COORDONNEES_TYPE_DEFAUT')) {
-// 	define('_COORDONNEES_TYPE_DEFAUT', 'work');
-// }
+if (!defined('_COORDONNEES_TYPE_DEFAUT')) {
+	define('_COORDONNEES_TYPE_DEFAUT', 'work');
+}
+
+// Pays par défaut (en principe défini par Coordonnees)
+if (!defined('_COORDONNEES_PAYS_DEFAUT')) {
+	define('_COORDONNEES_PAYS_DEFAUT', 'FR');
+}

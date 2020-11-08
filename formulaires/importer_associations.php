@@ -93,14 +93,28 @@ function formulaires_importer_associations_traiter() {
 	$import_init = ata_importer_init($status_file, $fichiers);
 
 	if ($import_init === true) {
-		spip_log('Importation depuis le formulaire', 'ata_import.' . _LOG_INFO_IMPORTANTE);
+		spip_log('Importation depuis le formulaire', 'ata_import_debug.' . _LOG_INFO_IMPORTANTE);
 		$redirect = generer_action_auteur('importer_associations', $status_file);
 		
+		
+		// TEST 
 		/*
-		// TEST
 		$retours['editable'] = true;
 		$importer_csv = charger_fonction('importer_csv', 'inc');
 		$donnees = $importer_csv($fichiers['csv'][0]['tmp_name'], true);
+		// Mémoriser une fois les mots-clés Activités, plutôt que de faire une requête sql
+    // à chaque itération d'association
+    $mots_cles_sql = sql_allfetsel('id_mot, titre', 'spip_mots','id_groupe_racine=1');
+    
+    // Mots-clés Activités dans un tableau de la forme id_mot => titre
+    // Au passage, les titres sont débarassés de leurs accents, en minuscules et sans "œ".
+    $mots_cles_activites = array();
+    
+    foreach ($mots_cles_sql as  $mot) {
+      $titre = strtolower(ata_importer_supprimer_accents($mot['titre']));
+			$titre = str_replace('œ', 'oe', $titre);
+			$mots_cles_activites[$mot['id_mot']] = $titre;
+    }
 		$status['lignes_importees'] = 0;
 		$status['lignes_restantes'] = 0;
 		$status['total'] = count($donnees);
@@ -109,15 +123,37 @@ function formulaires_importer_associations_traiter() {
 
 		foreach ($insertions as $cle_chunk => $chunk) {
       foreach ($chunk as $cle_asso => $asso) {
-        $asso_champs = array('nom' => $asso['nom']);
-        $compteur_insertions++;
-        $status['lignes_importees'] = $compteur_insertions;
-        $status['lignes_restantes'] = $status['total'] - $status['lignes_importees'];
+				$champs = array('nom' => $asso['nom'], 'code_postal' => $asso['code_postal']);
+				$champs_activites = array(
+          'creation' => explode(PHP_EOL, $asso['activites_creation']),
+          'diffusion' => explode(PHP_EOL,$asso['activites_diffusion']),
+          'formation' => explode(PHP_EOL, $asso['activites_formation_ressources']),
+          'transmission' => explode(PHP_EOL, $asso['activites_transmission']),
+          'residences' => explode(PHP_EOL, $asso['residences'])
+				);
+
+				$ids = array();
+
+				foreach($champs_activites as $activites) {
+					foreach($activites as $activite) {
+						$titre = strtolower(ata_importer_supprimer_accents($activite));
+						$titre = str_replace('œ', 'oe', $titre);
+						$i = array_search($titre, $mots_cles_activites);
+						if ($i) {
+							$ids[] = $i;
+						}
+					}
+				}
+
+				// if (sql_getfetsel('nom', 'spip_associations', array('nom='.sql_quote(trim($data['nom'])))))
+        //$compteur_insertions++;
+        //$status['lignes_importees'] = $compteur_insertions;
+        //$status['lignes_restantes'] = $status['total'] - $status['lignes_importees'];
         // if ($max_time and time() > $max_time) {
         //   $log = 'importer_donnees, fin de boucle asso : Timeout. ';
         //   $log .= 'Lignes importées = ' . $status['lignes_importees'] . '. ';
         //   $log .= 'Lignes restantes = ' . $status['lignes_restantes'] . '. ';
-        //   spip_log($log, 'ata_import.' ._LOG_INFO_IMPORTANTE);
+        //   spip_log($log, 'ata_imata_import_debug.' ._LOG_INFO_IMPORTANTE);
         //   break;
         // }
       }
@@ -125,7 +161,7 @@ function formulaires_importer_associations_traiter() {
       //   $log = 'importer_donnees, fin de boucle chunk : Timeout. ';
       //   $log .= 'Lignes importées = ' . $status['lignes_importees'] . '. ';
       //   $log .= 'Lignes restantes = ' . $status['lignes_restantes'] . '. ';
-      //   spip_log($log, 'ata_import.' ._LOG_INFO_IMPORTANTE);
+      //   spip_log($log, 'ata_import_debug.' ._LOG_INFO_IMPORTANTE);
       //   break;
       // }
     }
@@ -133,10 +169,10 @@ function formulaires_importer_associations_traiter() {
     // $log = 'importer_donnees, fin de script. ';
     // $log .= 'Lignes importées = ' . $status['lignes_importees'] . '. ';
     // $log .= 'Lignes restantes = ' . $status['lignes_restantes'] . '. ';
-    // spip_log($log, 'ata_import.' ._LOG_INFO_IMPORTANTE);
-		
-		// TEST FIN
+    // spip_log($log, 'ata_import_debug.' ._LOG_INFO_IMPORTANTE);
 		*/
+		// TEST FIN
+		
 		
 		$retours['message_ok'] = "Importation des données en cours.";
 		$retours['redirect'] = $redirect;

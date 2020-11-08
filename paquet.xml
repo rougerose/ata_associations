@@ -21,7 +21,9 @@
 	<necessite nom="saisies" compatibilite="[3.23.2;]" />
 	<necessite nom="verifier" compatibilite="[1.11.1;]" />
 	<necessite nom="cvtupload" compatibilite="[1.20.5;]" />
-
+	<necessite nom="gis" compatibilite="[4.49.2;]" />
+	<necessite nom="gma" compatibilite="[1.2.11;]" />
+	<necessite nom="rezosocios" compatibilite="[1.0.2;]" />
 
 	<pipeline nom="autoriser" inclure="ata_associations_autorisations.php" /> 
 

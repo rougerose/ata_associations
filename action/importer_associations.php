@@ -15,7 +15,7 @@ function action_importer_associations($args = null) {
 	$redirect = parametre_url(generer_action_auteur('importer_associations', $status_file), 'step', $step, '&');
 
 	$stepLog = $step - 1;
-	spip_log('Action importer, étape ' . $stepLog, 'ata_import.' . _LOG_INFO_IMPORTANTE);
+	spip_log('Action importer, étape ' . $stepLog, 'ata_import_debug.' . _LOG_INFO_IMPORTANTE);
 
 	$importer_associations = charger_fonction('ata_importer_associations', 'inc');
 	
