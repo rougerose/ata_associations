@@ -94,14 +94,50 @@ function formulaires_importer_associations_traiter() {
 
 	if ($import_init === true) {
 		spip_log('Importation depuis le formulaire', 'ata_import_debug.' . _LOG_INFO_IMPORTANTE);
-		$redirect = generer_action_auteur('importer_associations', $status_file);
 		
+		// Test doublons
+		// $association = array('nom' => 'Astérismes', 'code_postal' => '29120'); 
+		// $ids_nom = sql_allfetsel('id_association', 'spip_associations', 'nom=' . sql_quote($association['nom']));
+		// if (count($ids_nom)) {
+		// 	$from = 'spip_adresses AS L2 INNER JOIN spip_adresses_liens AS L1 ON (L1.id_adresse = L2.id_adresse)';
+		// 	$where = array(
+		// 		sql_in('L1.id_objet', $ids_nom),
+		// 		'L1.objet=' . sql_quote('association'),
+		// 		'L2.code_postal=' . sql_quote($association['code_postal'])
+		// 	);
+		// 	$ids_code = sql_allfetsel('L2.id_adresse', $from, $where);
+		// }
+		// if (isset($ids_code) and count($ids_code)) {
+		// 	$r = "ok";
+		// }
+		// Fin Test doublons
+
+		// Test Import classique
+		$importer_csv = charger_fonction('importer_csv', 'inc');
+		$donnees = $importer_csv($fichiers['csv'][0]['tmp_name'], true);
+
+		$importer_associations = charger_fonction('ata_importer_associations', 'inc');
+		$importer_associations($donnees);
+		// Fin Test Import classique
+
+		// $id_job = job_queue_add('ata_importer_csv', 'Importer fichier csv associations', $arguments = array($donnees), $file = 'genie/ata_importer_csv', true);
+
+		// // Executer immediatement si possible
+		// if ($id_job) {
+		// 	include_spip('inc/queue');
+		// 	queue_schedule(array($id_job));
+		// } else {
+		// 	spip_log("Erreur insertion Import CSV dans la file des travaux", 'ata_import_debug.' . _LOG_INFO_IMPORTANTE);
+		// }
+		
+
 		
 		// TEST 
 		/*
 		$retours['editable'] = true;
 		$importer_csv = charger_fonction('importer_csv', 'inc');
 		$donnees = $importer_csv($fichiers['csv'][0]['tmp_name'], true);
+		
 		// Mémoriser une fois les mots-clés Activités, plutôt que de faire une requête sql
     // à chaque itération d'association
     $mots_cles_sql = sql_allfetsel('id_mot, titre', 'spip_mots','id_groupe_racine=1');
@@ -114,7 +150,9 @@ function formulaires_importer_associations_traiter() {
       $titre = strtolower(ata_importer_supprimer_accents($mot['titre']));
 			$titre = str_replace('œ', 'oe', $titre);
 			$mots_cles_activites[$mot['id_mot']] = $titre;
-    }
+		}
+		
+
 		$status['lignes_importees'] = 0;
 		$status['lignes_restantes'] = 0;
 		$status['total'] = count($donnees);
@@ -169,7 +207,7 @@ function formulaires_importer_associations_traiter() {
     // $log = 'importer_donnees, fin de script. ';
     // $log .= 'Lignes importées = ' . $status['lignes_importees'] . '. ';
     // $log .= 'Lignes restantes = ' . $status['lignes_restantes'] . '. ';
-    // spip_log($log, 'ata_import_debug.' ._LOG_INFO_IMPORTANTE);
+		// spip_log($log, 'ata_import_debug.' ._LOG_INFO_IMPORTANTE);
 		*/
 		// TEST FIN
 		
