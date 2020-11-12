@@ -12,149 +12,194 @@ include_spip('action/editer_rezosocio');
 include_spip('inc/distant');
 include_spip('inc/modifier'); // collecter_requests()
 
-function inc_ata_importer_associations($donnees_csv) {
+function ata_importer_associations($nb_max = 5, $offset = 0) {
+  $nb_restant = $nb_max;
+  $now = $_SERVER['REQUEST_TIME'];
+  if (!$now) {
+    $now = time();
+  }
 
-  if (count($donnees_csv)) {
-    $verifier = charger_fonction('verifier', 'inc');
+  define('_ATA_IMPORTER_MAX_TIME', $now + 25); // 25 secondes max
+  $offset = intval($offset);
+
+  // Mémoriser une fois les mots-clés Activités, 
+  // plutôt que de faire une requête sql à chaque itération d'association
+  $mots = sql_allfetsel('id_mot, titre', 'spip_mots','id_groupe_racine=1');
     
-    $cpt = 0;
-    
-    // Mémoriser une fois les mots-clés Activités, plutôt que de faire une requête sql
-    // à chaque itération d'association
-    $mots = sql_allfetsel('id_mot, titre', 'spip_mots','id_groupe_racine=1');
-    
-    // Mots-clés Activités dans un tableau de la forme id_mot => titre
-    // Au passage, les titres sont débarassés de leurs accents, en minuscules et sans "œ".
-    $mots_activites = array();
-    
-    foreach ($mots as $mot) {
-      $titre = strtolower(ata_importer_supprimer_accents($mot['titre']));
-      $titre = str_replace('œ', 'oe', $titre);
-      $mots_activites[$mot['id_mot']] = $titre;
+  // Mots-clés Activités dans un tableau de la forme id_mot => titre
+  // Au passage, les titres sont débarassés de leurs accents, 
+  // en minuscules et sans "œ".
+  $mots_activites = array();
+  include_spip('inc/ata_importer_utils');
+  
+  foreach ($mots as $mot) {
+    $titre = strtolower(ata_importer_supprimer_accents($mot['titre']));
+    $titre = str_replace('œ', 'oe', $titre);
+    $mots_activites[$mot['id_mot']] = $titre;
+  }
+
+  $imports = sql_allfetsel('*', 'spip_associations_imports', 'statut=' . sql_quote('processing', '', 'id_associations_import', '0,2'));
+
+  foreach($imports as $import) {
+    spip_log("Import #".$import['id_associations_import']." ".$import['encours']."/".$import['total']." (max $nb_max)","ata_importer_csv." . _LOG_INFO_IMPORTANTE);
+
+    if (time() > _ATA_IMPORTER_MAX_TIME) {
+      spip_log("Import #".$import['id_associations_import']." ","ata_importer_csv." . _LOG_INFO_IMPORTANTE);
+      return $nb_restant;
     }
 
-    foreach($donnees_csv as $association) {
-      $cpt = $cpt + 1;
+    // Récupérer les N prochaines assos à traiter
+    $assos = sql_allfetsel('*', 'spip_associations_imports_sources', 'id_associations_import=' . intval($import['id_associations_import']) . ' AND statut=1', '', '', "$offset, $nb_max");
 
-      $association = array_map('trim', $association);
-      
-      //* Nom de l'association
-      $champs_asso = array('nom' => $association['nom']);
-      $nom = $champs_asso['nom'];
-
-      // Rechercher si l'association n'existe pas déjà dans la base
-      unset($ids_nom, $ids_code);
-      $ids_nom = sql_allfetsel('id_association', 'spip_associations', 'nom=' . sql_quote($association['nom']));
-      if (count($ids_nom)) {
-        $from = 'spip_adresses AS L2 INNER JOIN spip_adresses_liens AS L1 ON (L1.id_adresse = L2.id_adresse)';
-        $where = array(
-			    sql_in('L1.id_objet', $ids_nom),
-			    'L1.objet=' . sql_quote('association'),
-			    'L2.code_postal=' . sql_quote($association['code_postal'])
-        );
-        $ids_code = sql_allfetsel('L2.id_adresse', $from, $where);
-      }
-
-      if (empty($champs_asso['nom'])) {
-        spip_log("Association ligne $cpt du fichier CSV : Aucun nom, les données n'ont pas été importées.", 'ata_import_csv.' . _LOG_INFO_IMPORTANTE);
-        continue;
-      } elseif (!empty($ids_code) and count($ids_code) > 0) {
-        spip_log("Association $nom (ligne $cpt du fichier CSV) déjà présente : les données n'ont pas été importées.", 'ata_import_csv.' . _LOG_INFO_IMPORTANTE);
-        continue;
-      }
-
-      //* Site internet
-      $erreur_url = $verifier(
-        $association['site_internet'],
-        'url', 
-        array(
-          'mode' => 'protocole_seul',
-          'type_protocole' => 'web'
-        )
-      );
-      if ($erreur_url) {
-        $association['site_internet'] = substr_replace($association['site_internet'], 'http://', 0, 0);
-      }
-      $champs_asso['url_site'] = $association['site_internet'];
-
-      // membre_fraap
-      $membre_fraap = strtolower($association['membre_fraap']);
-      if ($membre_fraap == '' or $membre_fraap == 'non') {
-        $champs_asso['membre_fraap'] = 0;
-      } else {
-        $champs_asso['membre_fraap'] = 1;
-      }        
-
-      $id_association = 0;
-      $id_association = objet_inserer('association', null, $champs_asso);
-
-      if (intval($id_association)) {
-        //* Adresse
-        // adresse, adresse2, code_postal, ville
-        // TODO Ajouter Département et Région
-        $champs_adresse = array(
-          'titre' => $champs_asso['nom'],
-          'voie' => $association['adresse'] ? $association['adresse'] : '',
-          'complement' => $association['adresse2'] ? $association['adresse2']  : '',
-          'code_postal' => $association['code_postal'] ? $association['code_postal'] : '',
-          'ville' => $association['ville'] ? $association['ville'] :  ''
-        );
-        $id_adresse = 0;
-        $id_adresse = ata_importer_inserer_adresse($id_association, $champs_adresse);
-
-        //* Géolocalisation
-        if (intval($id_adresse)) {
-          $champs_adresse_gis = $champs_adresse;
-          $champs_adresse_gis['pays'] = 'France';
-
-          $id_gis = ata_importer_inserer_gis($id_association, $champs_adresse_gis);
-
-          if (intval($id_gis) == 0) {
-            spip_log("Association $nom, id $id_association : géolocalisation impossible", 'ata_import_csv.' . _LOG_INFO_IMPORTANTE);
-          }
+    if (count($assos)) {
+      foreach($assos as $asso) {
+        if (time() > _ATA_IMPORTER_MAX_TIME) {
+          return $nb_restant;
         }
-
-        //* Email
-        if (!empty($association['email_1'])) {
-          $champs_email = array(
-            'titre' => $champs_asso['nom'],
-            'email' => $association['email_1']
-          );
-          $id_email = ata_importer_inserer_email($id_association, $champs_email);
-          
-          if (intval($id_email) == 0) {
-            spip_log("Association $nom, id $id_association : l'adresse email n'a pas été importée.", 'ata_import_csv.' . _LOG_INFO_IMPORTANTE);
-          }
-        }
+        $mesure1 = microtime(true);
+        $res = ata_importer_inserer_association($asso, $mots_activites);
+        $mesure2 = microtime(true);
+        $duree = $mesure2 - $mesure1;
+        spip_log("Durée d'insertion : $duree secondes","ata_importer_csv_debug." . _LOG_INFO_IMPORTANTE);
+      return $nb_restant;
+        // Mettre à jour la table des imports
+        sql_update("spip_associations_imports", array("encours" => "encours+1"),"id_associations_import=" . intval($import['id_associations_import']));
+        // Mettre à jour le statut de la source
+        sql_updateq("spip_associations_imports_sources", array("statut" => 0), "id_associations_imports_source=" . intval($asso['id_associations_imports_source']));
+        $nb_restant--;
+        $nb_max--;
       }
-
-      //* Réseaux sociaux
-      if (!empty($association['facebook']) or !empty($association['twitter'] or !empty($association['instagram']))) {
-        $champs_rezos = array(
-          'titre' => $champs_asso['nom'],
-          'facebook' => $association['facebook'],
-          'twitter' => $association['twitter'],
-          'instagram' => $association['instagram']
-        );
-        ata_importer_inserer_rezos($id_association, $champs_rezos);
+      // Vérifier s'il y reste encore des données à traiter
+      // pour mettre à jour le statut des imports. 
+      if ($nb_max) {
+        $assos = sql_allfetsel('*', 'spip_associations_imports_sources', 'id_associations_import=' . intval($import['id_associations_import']) . ' AND statut=1', '', '', "$offset, $nb_max");
       }
-
-      //* Activités
-      $champs_activites = array(
-        'creation' => explode(PHP_EOL, $association['activites_creation']),
-        'diffusion' => explode(PHP_EOL,$association['activites_diffusion']),
-        'formation' => explode(PHP_EOL, $association['activites_formation_ressources']),
-        'transmission' => explode(PHP_EOL, $association['activites_transmission']),
-        'residences' => explode(PHP_EOL, $association['residences'])
-      );
-      
-      if (!empty($champs_activites['creation']) or !empty($champs_activites['diffusion']) or !empty($champs_activites['formation']) or !empty($champs_activites['transmission']) or !empty($champs_activites['residences'])) {
-        ata_importer_inserer_activites($id_association, $champs_activites, $mots_activites);
-      }
+    }
+    if ($nb_max AND !count($assos) AND $offset == 0) {
+      // Il ne reste plus de données à traiter
+      sql_updateq('spip_associations_imports', array('statut' => 'end'), 'id_associations_import=' . intval($import['id_associations_import']));
+      ata_importer_compter_imports($import['id_associations_import']);
+      ata_importer_update_meta();
+    }
+    if (!$nb_max OR time() > _ATA_IMPORTER_MAX_TIME) {
+      return $nb_restant;
     }
   }
+  // 
+  return 0;
 }
 
+
+function ata_importer_inserer_association($asso, $mots_activites) {
+  // Chercher un éventuel doublon
+  $ids_nom = sql_allfetsel('id_association', 'spip_associations', 'nom=' . sql_quote($asso['nom']));
+  if (count($ids_nom)) {
+    $from = 'spip_adresses AS L2 INNER JOIN spip_adresses_liens AS L1 ON (L1.id_adresse = L2.id_adresse)';
+    $where = array(
+      sql_in('L1.id_objet', $ids_nom),
+      'L1.objet=' . sql_quote('association'),
+      'L2.code_postal=' . sql_quote($asso['code_postal'])
+    );
+    $ids_code = sql_allfetsel('L2.id_adresse', $from, $where);
+
+    if (count($ids_code)) {
+      spip_log("Association " . $asso['nom'] . " déjà présente : les données n'ont pas été importées.", 'ata_import_csv.' . _LOG_INFO_IMPORTANTE);
+      
+      // Doublon = Abandon
+      return '';
+    }
+  }
+
+  $verifier = charger_fonction('verifier', 'inc');
+  $erreur_url = $verifier(
+    $asso['url_site'], 
+    'url', 
+    array(
+      'mode' => 'protocole_seul',
+      'type_protocole' => 'web'
+    )
+  );
+  if ($erreur_url) {
+    $asso['url_site'] = substr_replace($asso['url_site'], 'http://', 0, 0);
+  }
+
+  $champs_asso = array(
+    'nom' => $asso['nom'],
+    'url_site' => $asso['url_site'],
+    'membre_fraap' => $asso['membre_fraap']
+  );
+  
+  $id_association = objet_inserer('association', null, $champs_asso);
+
+  if (intval($id_association) == 0) {
+    return false;
+
+  } else {
+    //* Adresse
+    // adresse, adresse2, code_postal, ville
+    // TODO Ajouter Département et Région
+    $champs_adresse = array(
+      'titre' => $champs_asso['nom'],
+      'voie' => $asso['voie'] ? $asso['voie'] : '',
+      'complement' => $asso['complement'] ? $asso['complement']  : '',
+      'code_postal' => $asso['code_postal'] ? $asso['code_postal'] : '',
+      'ville' => $asso['ville'] ? $asso['ville'] :  ''
+    );
+
+    $id_adresse = 0;
+    $id_adresse = ata_importer_inserer_adresse($id_association, $champs_adresse);
+
+    //* Géolocalisation
+    if (intval($id_adresse)) {
+      $champs_adresse_gis = $champs_adresse;
+      $champs_adresse_gis['pays'] = 'France';
+
+      $id_gis = ata_importer_inserer_gis($id_association, $champs_adresse_gis);
+
+      if (intval($id_gis) == 0) {
+        spip_log("Association $nom, id $id_association : géolocalisation impossible", 'ata_import_csv.' . _LOG_INFO_IMPORTANTE);
+      }
+    }
+
+    //* Email
+    if (!empty($asso['email'])) {
+      $champs_email = array(
+        'titre' => $champs_asso['nom'],
+        'email' => $asso['email']
+      );
+      $id_email = ata_importer_inserer_email($id_association, $champs_email);
+      
+      if (intval($id_email) == 0) {
+        spip_log("Association $nom, id $id_association : l'adresse email n'a pas été importée.", 'ata_import_csv.' . _LOG_INFO_IMPORTANTE);
+      }
+    }
+
+    //* Réseaux sociaux
+    if (!empty($asso['facebook']) or !empty($asso['twitter'] or !empty($asso['instagram']))) {
+      $champs_rezos = array(
+        'titre' => $champs_asso['nom'],
+        'facebook' => $asso['facebook'],
+        'twitter' => $asso['twitter'],
+        'instagram' => $asso['instagram']
+      );
+      ata_importer_inserer_rezos($id_association, $champs_rezos);
+    }
+
+    //* Activités
+    $champs_activites = array(
+      'creation' => explode(PHP_EOL, $asso['activites_creation']),
+      'diffusion' => explode(PHP_EOL,$asso['activites_diffusion']),
+      'formation' => explode(PHP_EOL, $asso['activites_formation_ressources']),
+      'transmission' => explode(PHP_EOL, $asso['activites_transmission']),
+      'residences' => explode(PHP_EOL, $asso['residences'])
+    );
+
+    if (!empty($champs_activites['creation']) or !empty($champs_activites['diffusion']) or !empty($champs_activites['formation']) or !empty($champs_activites['transmission']) or !empty($champs_activites['residences'])) {
+      ata_importer_inserer_activites($id_association, $champs_activites, $mots_activites);
+    }
+    return '';
+  }
+}
 
 function ata_importer_inserer_adresse($id_association, $champs) {
   $champs['pays'] = _COORDONNEES_PAYS_DEFAUT; // FR

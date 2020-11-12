@@ -22,7 +22,7 @@ function ata_importer_init($status_file, $fichier) {
 
 function ata_importer_relance($redirect) {
   // si Javascript est dispo, anticiper le Time-out
-	return "<script language=\"JavaScript\" type=\"text/javascript\">window.setTimeout('location.href=\"$redirect\";',300);</script>\n";
+	return "<script language=\"JavaScript\" type=\"text/javascript\">window.setTimeout('location.href=\"$redirect\";',3000);</script>\n";
 }
 
 function ata_importer_afficher_progression($courant, $total) {
@@ -44,75 +44,127 @@ function ata_importer_supprimer_accents($texte){
 	return $transliterator->transliterate($texte);
 }
 
-/*include_spip('inc/flock');
-include_spip('inc/invalideur');
 
-if(!function_exists('deplacer_fichier_upload')){
-		include_spip('inc/documents');
-	}
+function ata_importer_update_meta($force = false) {
+		$current = ((isset($GLOBALS['meta']['ata_import_processing']) AND $GLOBALS['meta']['ata_import_processing']) ? $GLOBALS['meta']['ata_import_processing'] : false);
+		
+		$new = false;
 
-
-function ata_gerer_fichier($fichier, $supprimer = false) {
-  $fichier_infos = '';
-
-  if ($supprimer) {
-    ata_supprimer_fichier();
-  } else {
-    $fichier_infos = ata_copier_fichier($fichier);
-  }
-
-  return $fichier_infos;
-}
-
-function ata_copier_fichier($fichier) {
-
-	$repertoire = sous_repertoire(_DIR_IMPORTS_ATA, 'imports_associations/');
-	purger_repertoire($repertoire, $options = array('atime', time()));
-
-	$infos = array();
-	$hash = substr(md5(time()), 0, 5);
-	$chemin = $fichier['tmp_name'];
-	$nom = basename($fichier['name']);
-	$extension = strtolower(pathinfo($nom, PATHINFO_EXTENSION));
-	$extension_old = $extension;
-	$extension = corriger_extension($extension);
-	$nom = str_replace(".$extension_old", ".$extension", $nom);
-
-	if ($fichier['error'] == 0 and $fichier_tmp = tempnam($repertoire, $hash.'_')) {
-		$copie = $fichier_tmp.".$extension";
-
-		if (deplacer_fichier_upload($chemin, $copie, false)) {
-			$infos['name'] = basename($copie);
-			$infos['tmp_name'] = $copie;
-			$infos['extension'] = $extension;
-			$infos['size'] = $fichier['size'];
-			$infos['type'] = $fichier['type'];
-
-			supprimer_fichier($fichier_tmp, true);
+		if ($force OR (sql_countsel('spip_associations_imports', 'statut=' . sql_quote('processing')))) {
+			$new = 'oui';
 		}
-  }
-  
-	return $infos;
-}
 
-function ata_supprimer_fichier() {
-	
-	$repertoire = sous_repertoire(_DIR_IMPORTS_ASSOCIATIONS.'imports_associations/');
-
-	// Si on entre bien dans le répertoire
-	if ($ressource_repertoire = opendir($repertoire)) {
-		$fichiers = array();
-
-		// On commence par supprimer les plus vieux
-		while ($fichier = readdir($ressource_repertoire)) {
-			if (!in_array($fichier, array('.', '..', '.ok'))) {
-				$chemin_fichier = $repertoire.$fichier;
-
-				if (is_file($chemin_fichier)) {
-					supprimer_fichier($chemin_fichier);
-				}
+		if ($new OR $new !== $current) {
+			if ($new) {
+				ecrire_meta('ata_import_processing', $new);
+				// reprogrammer le cron
+				include_spip('inc/genie');
+				genie_queue_watch_dist();
+			} else {
+				effacer_meta('ata_import_processing');
 			}
 		}
+		return $new;
+}
+
+function ata_importer_cadence() {
+	// cadence maximum
+	$cadence = array(60, 30);
+	return $cadence;
+}
+
+function ata_importer_compter_imports($id_associations_import) {
+	$total = sql_countsel("spip_associations_imports_sources", array(
+		"id_associations_import=$id_associations_import",
+		"statut=1"
+	));
+	if (!$stotal) {
+		return;
+	}
+
+	// $statuts = sql_allfetsel('statut, count(statut) as nb', 'spip_associations_imports_sources', 'id_associations_import=1', 'statut');
+	// $statuts = array_combine(array_map('reset', $statuts), array_map('end', $statuts));
+
+	// $set = array(
+	// 	'total' => $total,
+		
+	// );
+
+}
+
+function ata_importer_associations_init($redirect) {
+	$timeout = ini_get('max_execution_time');
+		// valeur conservatrice si on a pas reussi a lire le max_execution_time
+	if (!$timeout) {
+		$timeout = 30;
+	} // parions sur une valeur tellement courante ...
+	$max_time = time() + $timeout / 2;
+
+	include_spip('inc/minipres');
+	@ini_set('zlib.output_compression', '0'); // pour permettre l'affichage au fur et a mesure
+
+	$titre = _T('Importation en cours');
+	$balise_img = chercher_filtre('balise_img');
+	$titre .= $balise_img(chemin_image('searching.gif'));
+	echo(install_debut_html($titre));
+	// script de rechargement auto sur timeout
+	echo http_script("window.setTimeout('location.href=\"" . $redirect . "\";'," . ($timeout * 1000) . ')');
+	echo "<div style='text-align: left'>\n";
+	echo("</div>\n");
+
+	$res = false;
+	if (_request('step')) {
+		$id_associations_import = _request('arg');
+		$res = ata_importer_associations_processing($id_associations_import, $max_time);
+
+		// $options = array(
+		// 	'callback_progression' => 'dump_afficher_progres',
+		// 	'max_time' => $max_time,
+		// 	'no_erase_dest' => lister_tables_noerase(),
+		// 	'where' => $status['where'] ? $status['where'] : array(),
+		// );
+		// $res = base_copier_tables($status_file, $status['tables'], '', 'dump', $options);
+	} else {
+		echo ata_importer_relance($redirect);
+	}
+
+	// if (!$res and $redirect) {
+	// 	echo ata_importer_relance($redirect);
+	// }
+	echo(install_fin_html());
+	
+	if (@ob_get_contents()) {
+		ob_end_flush();
+	}
+	flush();
+
+	return $res;
+}
+
+function ata_importer_associations_processing($id_associations_import, $max_time) {
+	$nb = 0;
+	$relance = true;
+	$boost = false;
+	$f_relance = _DIR_TMP."ata_importer_relance.txt";
+	$f_last = _DIR_TMP."ata_importer_last.txt";
+	
+	if (!$boost) {
+		lire_fichier($f_relance, $nb);
+	}
+
+	if (!$nb = intval($nb)) {
+		$relance = false;
+		$periode = $max_time;
+		$nb = 30;
+		$now = time();
+		if (!$boost) {
+			lire_fichier($f_last, $last);
+			if ($last = intval($last) and ($dt = $now - $last) > 0) {
+        $c = min(2, $dt / $periode);
+        $nb = intval(round($nb * $c, 0));
+        //spip_log("Correction sur nb : $c ($dt au lieu de $periode) => $nb","ata_importer_associations." . _LOG_INFO_IMPORTANTE);
+      }
+		}
+		ecrire_fichier($f_last, $now);
 	}
 }
-*/

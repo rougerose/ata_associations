@@ -32,3 +32,14 @@ function ata_associations_optimiser_base_disparus($flux) {
 
 	return $flux;
 }
+
+
+function ata_associations_taches_generales_cron($taches_generales) {
+	if (isset($GLOBALS['meta']['ata_import_processing']) and ($GLOBALS['meta']['ata_import_processing']==='oui')){
+		
+		include_spip('inc/ata_importer_utils');
+		list($periode,$nb) = ata_importer_cadence();
+		$taches_generales['ata_importer_test'] = max(60, $periode-15);
+	}
+	return $taches_generales;
+}

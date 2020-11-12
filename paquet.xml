@@ -25,7 +25,8 @@
 	<necessite nom="gma" compatibilite="[1.2.11;]" />
 	<necessite nom="rezosocios" compatibilite="[1.0.2;]" />
 
-	<pipeline nom="autoriser" inclure="ata_associations_autorisations.php" /> 
+	<pipeline nom="autoriser" inclure="ata_associations_autorisations.php" />
+	<!-- <pipeline nom="taches_generales_cron" inclure="ata_associations_pipelines.php" /> -->
 
 	<pipeline nom="declarer_tables_objets_sql" inclure="base/ata_associations.php" /> 
 	<pipeline nom="declarer_tables_interfaces" inclure="base/ata_associations.php" /> 

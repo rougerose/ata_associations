@@ -26,7 +26,7 @@ if (!defined('_ECRIRE_INC_VERSION')) {
 function ata_associations_upgrade($nom_meta_base_version, $version_cible) {
 	$maj = array();
 
-	$maj['create'] = array(array('maj_tables', array('spip_associations')));
+	$maj['create'] = array(array('maj_tables', array('spip_associations', 'spip_associations_imports_sources', 'spip_associations_imports')));
 
 	include_spip('base/upgrade');
 	maj_plugin($nom_meta_base_version, $version_cible, $maj);
@@ -43,6 +43,8 @@ function ata_associations_upgrade($nom_meta_base_version, $version_cible) {
 function ata_associations_vider_tables($nom_meta_base_version) {
 
 	sql_drop_table('spip_associations');
+	sql_drop_table('spip_associations_imports_sources');
+	sql_drop_table('spip_associations_imports');
 
 	# Nettoyer les liens courants (le génie optimiser_base_disparus se chargera de nettoyer toutes les tables de liens)
 	sql_delete('spip_documents_liens', sql_in('objet', array('association')));
