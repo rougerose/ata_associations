@@ -25,6 +25,7 @@
 	<necessite nom="gma" compatibilite="[1.2.11;]" />
 	<necessite nom="rezosocios" compatibilite="[1.0.2;]" />
 	<necessite nom="territoires" compatibilite="[1.0.1;]" />
+	<necessite nom="coordonnees" compatibilite="[3.0.4;]" />
 
 	<pipeline nom="autoriser" inclure="ata_associations_autorisations.php" />
 
