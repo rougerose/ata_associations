@@ -6,11 +6,13 @@
 	#FORMULAIRE_CONFIGURER_ATA_ASSOCIATIONS
 </div> -->
 
-<div class="importer">
+<div class="importer_csv">
 	<h2>
-		<:a2ta_data:titre_importer_csv:>
+		<:ata_associations:titre_importer_csv:>
 	</h2>
-	<div class="Xajax">
-		#FORMULAIRE_IMPORTER_ASSOCIATIONS
+	<div class="ajax">
+		#FORMULAIRE_IMPORTER_CSV
 	</div>
 </div>
+
+<INCLURE{fond=formulaires/inc_importer_associations, env, ajax} />

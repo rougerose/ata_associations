@@ -1,8 +1,8 @@
 # Liste mots-clés Activités
 - Création
   - Création
-  - aide à la production technique d'oeuvres
-  - aide au financement d'oeuvres
+  - Aide à la production technique d'oeuvres
+  - Aide au financement d'oeuvres
   - Mise à disposition d'ateliers, > d’outils
   - Matériauthèque - ressourcerie
 - Diffusion

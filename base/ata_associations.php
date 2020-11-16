@@ -64,7 +64,7 @@ function ata_associations_declarer_tables_objets_sql($tables) {
 		'date' => 'date',
 		'champs_editables'  => array('nom', 'membre_fraap', 'url_site'),
 		'champs_versionnes' => array('url_site'),
-		'rechercher_champs' => array("nom" => 5, "url_site" => 5),
+		'rechercher_champs' => array('nom' => 5, 'url_site' => 5),
 		'tables_jointures'  => array(),
 		'statut_textes_instituer' => array(
 			'prepa'    => 'texte_statut_en_cours_redaction',
@@ -130,13 +130,13 @@ function ata_associations_declarer_tables_objets_sql($tables) {
 	$tables['spip_associations_imports'] = array(
 		'type' => 'associations_import',
 		'principale' => 'oui',
-		'table_objet_surnoms' => array('associationsimport'), // table_objet('associations_import') => 'associations_imports' 
+		'table_objet_surnoms' => array('associationsimport'),
 		'field'=> array(
 			'id_associations_import' => 'bigint(21) NOT NULL',
 			'statut'             => 'varchar(20) DEFAULT "processing" NOT NULL',
 			'total'              => 'bigint(21) NOT NULL DEFAULT 0',
 			'encours'            => 'bigint(21) NOT NULL DEFAULT 0',
-			"date_start" => "datetime NOT NULL DEFAULT '0000-00-00 00:00:00'",
+			'date_start' => "datetime NOT NULL DEFAULT '0000-00-00 00:00:00'",
 			'maj'                => 'TIMESTAMP'
 		),
 		'key' => array(
@@ -150,22 +150,10 @@ function ata_associations_declarer_tables_objets_sql($tables) {
 		'rechercher_champs' => array(),
 		'tables_jointures'  => array(),
 		'statut_textes_instituer' => array(
-			'processing'    => 'texte_statut_en_cours_redaction',
-			'end'     => 'texte_statut_propose_evaluation',
-			'pending'    => 'texte_statut_propose_evaluation',
-			// 'publie'   => 'texte_statut_publie',
-			// 'refuse'   => 'texte_statut_refuse',
-			// 'poubelle' => 'texte_statut_poubelle',
+			'processing'    => 'associations_import:texte_statut_processing',
+			'end'     => 'associations_import:texte_statut_end',
+			'pending'    => 'associations_import:texte_statut_pending',
 		),
-		// 'statut'=> array(
-		// 	array(
-		// 		'champ'     => 'statut',
-		// 		'publie'    => 'publie',
-		// 		'previsu'   => 'publie,prop,prepa',
-		// 		'post_date' => 'date',
-		// 		'exception' => array('statut','tout')
-		// 	)
-		// ),
 		'texte_changer_statut' => 'associations_import:texte_changer_statut_associations_import',
 	);
 
