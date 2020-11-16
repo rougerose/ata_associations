@@ -1,0 +1,28 @@
+<div class="formulaire_spip formulaire_#ENV{form}">
+  [<p class="reponse_formulaire reponse_formulaire_ok">(#ENV*{message_ok})</p>]
+  [<p class="reponse_formulaire reponse_formulaire_erreur">(#ENV*{message_erreur})</p>]
+
+  [(#ENV{editable}|oui)
+  <form method="post" action="#ENV{action}" enctype="multipart/form-data">
+    <div>
+      [(#REM) declarer les hidden qui declencheront le service du formulaire
+      parametre : url d'action ]
+      #ACTION_FORMULAIRE{#ENV{action}}
+		
+      <div class="editer-groupe">
+        <BOUCLE_associations_imports(ASSOCIATIONS_IMPORTS){id_associations_import IN #ENV{ids}{par date_start}}>
+          
+        </BOUCLE_associations_imports>
+          #SAISIE*{radio, associations_imports, label="Importer", datas=#GET{datas}}
+        </B_associations_imports>
+      
+      </div>
+		
+		  [(#REM) ajouter les saisies supplementaires : extra et autre, a cet endroit ]
+		  <!--extra-->
+		
+		  <p class="boutons"><span class="image_loading"></span><input type="submit" class="submit" value="<:bouton_telecharger:>" /></p>
+    </div>
+  </form>
+  ]
+</div>
