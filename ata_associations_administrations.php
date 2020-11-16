@@ -13,6 +13,8 @@ if (!defined('_ECRIRE_INC_VERSION')) {
 	return;
 }
 
+include_spip('base/importer_spip_mots');
+include_spip('base/importer_spip_groupes_mots');
 
 /**
  * Fonction d'installation et de mise à jour du plugin ATA Associations.
@@ -31,7 +33,9 @@ function ata_associations_upgrade($nom_meta_base_version, $version_cible) {
 			'spip_associations',
 			'spip_associations_imports_sources',
 			'spip_associations_imports')),
-		array('ata_associations_configurer_dependances')
+		array('ata_associations_configurer_dependances'),
+		array('importer_spip_mots'),
+		array('importer_spip_groupes_mots'),
 	);
 	include_spip('base/upgrade');
 	maj_plugin($nom_meta_base_version, $version_cible, $maj);
