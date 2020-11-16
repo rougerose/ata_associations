@@ -4,7 +4,7 @@
 	version="1.0.0"
 	etat="dev"
 	compatibilite="[3.3.0-dev;3.3.*]"
-	logo=""
+	logo="prive/themes/spip/images/ata_associations-64.png"
 	documentation=""
 	schema="1.0.0"
 >
