@@ -1,10 +1,6 @@
 [(#AUTORISER{configurer,_ata_associations}|sinon_interdire_acces)]
 
 <h1 class="grostitre"><:ata_associations:titre_page_configurer_ata_associations:></h1>
-
-<div class="ajax">
-	#FORMULAIRE_CONFIGURER_ATA_ASSOCIATIONS
-</div>
 <div class="importer_csv">
 	<h2>
 		<:ata_associations:titre_importer_csv:>
@@ -13,5 +9,14 @@
 		#FORMULAIRE_IMPORTER_CSV
 	</div>
 </div>
-
-<INCLURE{fond=formulaires /inc_importer_associations, env, ajax} />
+<div class="importer_associations">
+	#SET{ids, #ARRAY}
+	<B_associations_imports>
+		<h2>Importer les associations</h2>
+		<BOUCLE_associations_imports(SPIP_ASSOCIATIONS_IMPORTS){statut=processing}{par id_associations_import}>
+			#SET{ids, #GET{ids}|push{#ID_ASSOCIATIONS_IMPORT}}
+	</BOUCLE_associations_imports></B_associations_imports>
+	<div class="ajax">
+		#FORMULAIRE_IMPORTER_ASSOCIATIONS{#GET{ids}}
+	</div>
+</div>

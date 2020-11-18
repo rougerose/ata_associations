@@ -5,7 +5,7 @@ if (!defined('_ECRIRE_INC_VERSION')) {
 }
 
 
-function inc_ata_importer_csv($donnees, $publier = 0) {
+function inc_ata_importer_csv($donnees, $id_rubrique, $publier = 0) {
 	$res = '';
 	$total = count($donnees);
 	$now = date('Y-m-d H:i:s');
@@ -16,7 +16,7 @@ function inc_ata_importer_csv($donnees, $publier = 0) {
 		$infos_import = array(
 			'total' => $total,
 			'encours' => 0,
-			'date_start' => $now,
+			'id_rubrique' => $id_rubrique,
 			'statut' => 'pending',
 		);
 		$id_associations_import = objet_inserer('associations_imports', null, $infos_import);

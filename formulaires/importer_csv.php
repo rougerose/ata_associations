@@ -16,6 +16,12 @@ function formulaires_importer_csv_saisies() {
 		return $saisies;
 	}
 
+	$rubriques = sql_allfetsel('id_rubrique, titre', 'spip_rubriques', '', 'titre ASC');
+	$t_rubriques = array();
+	foreach ($rubriques as $rubrique) {
+		$t_rubriques[$rubrique['id_rubrique']] = $rubrique['titre'];
+	}
+
 	$saisies = array(
 		array(
 			'saisie' => 'hidden',
@@ -41,6 +47,15 @@ function formulaires_importer_csv_saisies() {
 			)
 		),
 		array(
+			'saisie' => 'selection',
+			'options' => array(
+				'nom' => 'id_rubrique',
+				'obligatoire' => 'oui',
+				'label' => _T('ata_associations:label_importer_rubrique'),
+				'datas' => $t_rubriques
+			)
+		),
+		array(
 			'saisie' => 'radio',
 			'options' => array(
 				'nom' => 'publier',
@@ -55,24 +70,6 @@ function formulaires_importer_csv_saisies() {
 
 
 function formulaires_importer_csv_charger() {
-	// $asso = sql_allfetsel('*', 'spip_associations_imports_sources', 'id_associations_imports_source=7');
-	// $champs_activites = array(
-	// 	'creation' => unserialize($asso[0]['creation']),
-	// 	'diffusion' => unserialize($asso[0]['diffusion']),
-	// 	'formation' => unserialize($asso[0]['formation']),
-	// 	'transmission' => unserialize($asso[0]['transmission']),
-	// 	'residences' => unserialize($asso[0]['residences'])
-	// );
-
-	// $c = array_sum($champs_activites['formation']);
-	// foreach ($champs_activites as $activites) {
-	// 	foreach ($activites as $activite) {
-	// 		if ($activite) {
-	// 			$a = $activite;
-	// 		}
-	// 	}
-	// }
-
 	$contexte = array(
 		'mes_saisies' => formulaires_importer_csv_saisies()
 	);
@@ -108,11 +105,12 @@ function formulaires_importer_csv_traiter() {
 	$retours = array();
 	$fichiers = _request('_fichiers');
 	$publier = _request('publier');
+	$id_rubrique = _request('id_rubrique');
 	$importer_csv = charger_fonction('importer_csv', 'inc');
 	$donnees = $importer_csv($fichiers['csv'][0]['tmp_name'], true);
 
 	$ata_importer_csv = charger_fonction('ata_importer_csv', 'inc');
-	$res = $ata_importer_csv($donnees, $publier);
+	$res = $ata_importer_csv($donnees, $id_rubrique, $publier);
 
 	// Test
 	//$res = array(1, 1);

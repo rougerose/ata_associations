@@ -7,14 +7,14 @@ if (!defined('_ECRIRE_INC_VERSION')) {
 include_spip('inc/saisies');
 include_spip('inc/ata_importer_utils');
 
-function formulaires_importer_associations_saisies($ids) {
+function formulaires_importer_associations_saisies($ids = array()) {
 	$saisies = array();
 	$imports = array();
 	if (is_array($ids) and count($ids)) {
 		foreach ($ids as $id) {
 			// Récupérer les imports à traiter
 			$row = sql_allfetsel(
-				'total, encours, date_start',
+				'total, encours, id_rubrique, date_start',
 				'spip_associations_imports',
 				'id_associations_import=' . intval($id)
 			);
@@ -40,32 +40,31 @@ function formulaires_importer_associations_saisies($ids) {
 			)
 		);
 	}
-
 	return $saisies;
 }
 
-function formulaires_importer_associations_charger($ids) {
+function formulaires_importer_associations_charger($ids = array()) {
 	$contexte = array();
 	return $contexte;
 }
 
 
-function formulaires_importer_associations_verifier($ids) {
+function formulaires_importer_associations_verifier($ids = array()) {
 	$erreurs = array();
 	return $erreurs;
 }
 
 
-function formulaires_importer_associations_traiter($ids) {
+function formulaires_importer_associations_traiter($ids = array()) {
 	refuser_traiter_formulaire_ajax();
 	$retours = array();
 	$id_associations_import = _request('associations_imports');
-
+	$id_rubrique = sql_getfetsel('id_rubrique', 'spip_associations_imports', 'id_associations_import='.sql_quote(intval($id_associations_import)));
 	$timeout = time() + 30;
 	$nb = 60;
 
 	$ata_importer_associations = charger_fonction('ata_importer_associations', 'inc/');
-	$res = $ata_importer_associations($id_associations_import, $nb, $timeout);
+	$res = $ata_importer_associations($id_associations_import, $id_rubrique, $nb, $timeout);
 
 	//$res = array('message_ok' => 'ok', 'nb' => '12');
 

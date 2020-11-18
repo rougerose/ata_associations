@@ -12,7 +12,7 @@ include_spip('action/editer_rezosocio');
 include_spip('inc/distant');
 include_spip('inc/modifier'); // collecter_requests()
 
-function inc_ata_importer_associations($id_associations_import = 0, $nb_max = 50, $maxtime = 30) {
+function inc_ata_importer_associations($id_associations_import = 0, $id_rubrique = '', $nb_max = 50, $maxtime = 30) {
 	$nb_restant = $nb_max;
 	$res = array();
 
@@ -39,8 +39,8 @@ function inc_ata_importer_associations($id_associations_import = 0, $nb_max = 50
 				$res['nb'] = $nb_restant;
 				return $res;
 			}
-			// $t1 = microtime(true);
-
+			// rubrique liée à l'association
+			$asso['id_rubrique'] = $id_rubrique;
 			$id_association = ata_importer_inserer_association($asso);
 			sql_updateq(
 				'spip_associations_imports_sources',
@@ -52,13 +52,6 @@ function inc_ata_importer_associations($id_associations_import = 0, $nb_max = 50
 				array('encours' => 'encours+1'),
 				'id_associations_import=' . intval($id_associations_import)
 			);
-
-			// $t2 = microtime(true);
-			// $d = $t2 - $t1;
-			// spip_log(
-			// 	"Durée d'insertion de l'asso $id_association : $d secondes",
-			// 	'ata_importer_csv_debug.' . _LOG_INFO_IMPORTANTE
-			// );
 			$nb_restant--;
 		}
 	}
@@ -119,10 +112,10 @@ function ata_importer_inserer_association($asso) {
 	$champs_asso = array(
 		'nom' => $asso['nom'],
 		'url_site' => $asso['url_site'],
-		'membre_fraap' => $asso['membre_fraap']
+		'membre_fraap' => $asso['membre_fraap'],
 	);
 
-	$id_association = objet_inserer('association', null, $champs_asso);
+	$id_association = objet_inserer('association', $asso['id_rubrique'], $champs_asso);
 
 	if (intval($id_association) == 0) {
 		return 0;

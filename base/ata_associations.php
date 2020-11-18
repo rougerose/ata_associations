@@ -139,6 +139,7 @@ function ata_associations_declarer_tables_objets_sql($tables) {
 			'total'              => 'bigint(21) NOT NULL DEFAULT 0',
 			'encours'            => 'bigint(21) NOT NULL DEFAULT 0',
 			'id_rubrique'        => 'bigint(21) NOT NULL DEFAULT 0',
+			'date_start' => "datetime NOT NULL DEFAULT '0000-00-00 00:00:00'",
 			'statut'             => 'varchar(20)  DEFAULT "0" NOT NULL',
 			'maj'                => 'TIMESTAMP'
 		),

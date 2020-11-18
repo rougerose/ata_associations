@@ -18,6 +18,7 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 	// L
 	'label_importer_fichier' => "Fichier CSV",
 	'label_importer_publier' => 'Publier les associations importées',
+	'label_importer_rubrique' => 'La rubrique de destination',
 
 	// M
 	'message_erreur_importer_pas_de_fichier' => 'Aucun fichier à importer !',
