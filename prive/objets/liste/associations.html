@@ -18,10 +18,10 @@
 		</tr>
 	</thead>
 	<tbody>
-	<BOUCLE_liste_associations(ASSOCIATIONS){id_mot?}{id_auteur?}{where?}{statut?}{recherche?}{tri #ENV{par,num nom},#GET{defaut_tri}}{par nom}{pagination #ENV{nb,10}}>
+	<BOUCLE_liste_associations(ASSOCIATIONS){id_rubrique?}{id_secteur?}{id_mot?}{id_auteur?}{where?}{statut?}{recherche?}{tri #ENV{par,num nom},#GET{defaut_tri}}{par nom}{pagination #ENV{nb,10}}>
 		<tr class="[(#COMPTEUR_BOUCLE|alterner{row_odd,row_even})]">
 			<td class="picto">[(#CHEMIN_IMAGE{association-16.png}|balise_img)]</td>
-			<td class="statut">[(#STATUT|puce_statut{association,#ID_ASSOCIATION})]</td> 
+			<td class="statut">[(#STATUT|puce_statut{association,#ID_ASSOCIATION,#ID_RUBRIQUE})]</td> 
 			<td class="nom principale">[(#LOGO_ASSOCIATION|image_reduire{20,26})]<a href="[(#ID_ASSOCIATION|generer_url_entite{association})]" title="<:info_numero_abbreviation|attribut_html:> #ID_ASSOCIATION">[(#RANG). ]#NOM</a></td>
 			<td class="date secondaire">[(#DATE|affdate_jourcourt)]</td> 
 			<td class="id">[(#AUTORISER{modifier,association,#ID_ASSOCIATION}|?{

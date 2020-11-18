@@ -1,18 +1,18 @@
 <paquet
 	prefix="ata_associations"
 	categorie="divers"
-	version="1.0.0"
+	version="1.0.1"
 	etat="dev"
 	compatibilite="[3.3.0-dev;3.3.*]"
 	logo="prive/themes/spip/images/ata_associations-64.png"
 	documentation=""
-	schema="1.0.0"
+	schema="1.0.1"
 >
 	<!--
-		Paquet généré le 2020-10-30 13:02:35
+		Paquet généré le 2020-11-18 12:35:48
 	-->
 
-	<nom>ATA Associations</nom>
+	<nom>ATA associations</nom>
 
 
 	<auteur lien='https://rouge-rose.net'>christophe le drean</auteur>
@@ -31,7 +31,11 @@
 
 	<pipeline nom="declarer_tables_objets_sql" inclure="base/ata_associations.php" />
 	<pipeline nom="declarer_tables_interfaces" inclure="base/ata_associations.php" />
+	<pipeline nom="affiche_enfants" inclure="ata_associations_pipelines.php" />
+	<pipeline nom="boite_infos" inclure="ata_associations_pipelines.php" />
+	<pipeline nom="objet_compte_enfants" inclure="ata_associations_pipelines.php" />
 	<pipeline nom="optimiser_base_disparus" inclure="ata_associations_pipelines.php" />
+	<pipeline nom="trig_propager_les_secteurs" inclure="ata_associations_pipelines.php" />
 
 	<menu nom="associations" titre="association:titre_associations" parent="menu_edition" icone="images/association-16.png" action="associations" />
 </paquet>

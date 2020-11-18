@@ -12,7 +12,25 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 	'ajouter_lien_associations_imports_source' => 'Ajouter ce associations_imports_source',
 
 	// C
+	'champ_code_postal_label' => 'Code postal',
+	'champ_complement_label' => 'Complément',
+	'champ_creation_label' => 'Création',
+	'champ_diffusion_label' => 'Diffusion',
+	'champ_email_label' => 'Email',
+	'champ_facebook_label' => 'Facebook',
+	'champ_formation_label' => 'Formation',
 	'champ_id_associations_import_label' => 'id_associations_import',
+	'champ_instagram_label' => 'Instagram',
+	'champ_membre_fraap_label' => 'Membre Fraap',
+	'champ_nom_label' => 'Nom',
+	'champ_publier_label' => 'Publier',
+	'champ_residences_label' => 'Résidences',
+	'champ_statut_label' => 'Statut',
+	'champ_transmission_label' => 'Transmission',
+	'champ_twitter_label' => 'Twitter',
+	'champ_url_site_label' => 'Url site',
+	'champ_ville_label' => 'Ville',
+	'champ_voie_label' => 'Voie',
 	'confirmer_supprimer_associations_imports_source' => 'Confirmez-vous la suppression de cet associations_imports_source ?',
 
 	// I

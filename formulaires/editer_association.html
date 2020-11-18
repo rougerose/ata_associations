@@ -11,9 +11,18 @@
 			[(#SAISIE{input, nom, obligatoire=oui,
 				label=<:association:champ_nom_label:>})]
 
+			[<div class="editer editer_rubrique[ (#ENV**{erreurs/id_parent}|oui)erreur]">
+					<label for="id_parent"><:titre_cadre_interieur_rubrique:></label>[
+					<span class="erreur_message">(#ENV**{erreurs/id_parent})</span>
+					]
+					(#VAL|chercher_rubrique{#ENV{id_association},#ENV{id_parent},'association',#ENV{id_secteur},'',0,form_simple})
+			</div>]
+
+
+
 			[(#SAISIE{radio, membre_fraap,
 				label=<:association:champ_membre_fraap_label:>,
-				datas=#ARRAY{1, Oui, 0, Non}})]
+				datas=[(#ARRAY{1, Oui, 0, Non})]})]
 
 			[(#SAISIE{input, url_site,
 				label=<:association:champ_url_site_label:>})]

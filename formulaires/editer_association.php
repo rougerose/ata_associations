@@ -2,7 +2,7 @@
 /**
  * Gestion du formulaire de d'édition de association
  *
- * @plugin     ATA Associations
+ * @plugin     ATA associations
  * @copyright  2020
  * @author     christophe le drean
  * @licence    GNU/GPL v3
@@ -22,6 +22,8 @@ include_spip('inc/editer');
  *
  * @param int|string $id_association
  *     Identifiant du association. 'new' pour un nouveau association.
+ * @param int $id_rubrique
+ *     Identifiant de l'objet parent (si connu)
  * @param string $retour
  *     URL de redirection après le traitement
  * @param int $lier_trad
@@ -35,7 +37,7 @@ include_spip('inc/editer');
  * @return string
  *     Hash du formulaire
  */
-function formulaires_editer_association_identifier_dist($id_association = 'new', $retour = '', $lier_trad = 0, $config_fonc = '', $row = array(), $hidden = '') {
+function formulaires_editer_association_identifier_dist($id_association = 'new', $id_rubrique = 0, $retour = '', $lier_trad = 0, $config_fonc = '', $row = array(), $hidden = '') {
 	return serialize(array(intval($id_association)));
 }
 
@@ -48,6 +50,8 @@ function formulaires_editer_association_identifier_dist($id_association = 'new',
  *
  * @param int|string $id_association
  *     Identifiant du association. 'new' pour un nouveau association.
+ * @param int $id_rubrique
+ *     Identifiant de l'objet parent (si connu)
  * @param string $retour
  *     URL de redirection après le traitement
  * @param int $lier_trad
@@ -61,8 +65,8 @@ function formulaires_editer_association_identifier_dist($id_association = 'new',
  * @return array
  *     Environnement du formulaire
  */
-function formulaires_editer_association_charger_dist($id_association = 'new', $retour = '', $lier_trad = 0, $config_fonc = '', $row = array(), $hidden = '') {
-	$valeurs = formulaires_editer_objet_charger('association', $id_association, '', $lier_trad, $retour, $config_fonc, $row, $hidden);
+function formulaires_editer_association_charger_dist($id_association = 'new', $id_rubrique = 0, $retour = '', $lier_trad = 0, $config_fonc = '', $row = array(), $hidden = '') {
+	$valeurs = formulaires_editer_objet_charger('association', $id_association, $id_rubrique, $lier_trad, $retour, $config_fonc, $row, $hidden);
 	return $valeurs;
 }
 
@@ -75,6 +79,8 @@ function formulaires_editer_association_charger_dist($id_association = 'new', $r
  *
  * @param int|string $id_association
  *     Identifiant du association. 'new' pour un nouveau association.
+ * @param int $id_rubrique
+ *     Identifiant de l'objet parent (si connu)
  * @param string $retour
  *     URL de redirection après le traitement
  * @param int $lier_trad
@@ -88,7 +94,7 @@ function formulaires_editer_association_charger_dist($id_association = 'new', $r
  * @return array
  *     Tableau des erreurs
  */
-function formulaires_editer_association_verifier_dist($id_association = 'new', $retour = '', $lier_trad = 0, $config_fonc = '', $row = array(), $hidden = '') {
+function formulaires_editer_association_verifier_dist($id_association = 'new', $id_rubrique = 0, $retour = '', $lier_trad = 0, $config_fonc = '', $row = array(), $hidden = '') {
 	$erreurs = array();
 
 	$erreurs = formulaires_editer_objet_verifier('association', $id_association, array('nom'));
@@ -105,6 +111,8 @@ function formulaires_editer_association_verifier_dist($id_association = 'new', $
  *
  * @param int|string $id_association
  *     Identifiant du association. 'new' pour un nouveau association.
+ * @param int $id_rubrique
+ *     Identifiant de l'objet parent (si connu)
  * @param string $retour
  *     URL de redirection après le traitement
  * @param int $lier_trad
@@ -118,7 +126,7 @@ function formulaires_editer_association_verifier_dist($id_association = 'new', $
  * @return array
  *     Retours des traitements
  */
-function formulaires_editer_association_traiter_dist($id_association = 'new', $retour = '', $lier_trad = 0, $config_fonc = '', $row = array(), $hidden = '') {
-	$retours = formulaires_editer_objet_traiter('association', $id_association, '', $lier_trad, $retour, $config_fonc, $row, $hidden);
+function formulaires_editer_association_traiter_dist($id_association = 'new', $id_rubrique = 0, $retour = '', $lier_trad = 0, $config_fonc = '', $row = array(), $hidden = '') {
+	$retours = formulaires_editer_objet_traiter('association', $id_association, $id_rubrique, $lier_trad, $retour, $config_fonc, $row, $hidden);
 	return $retours;
 }

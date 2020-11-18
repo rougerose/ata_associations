@@ -1,8 +1,8 @@
 <?php
 /**
- * Fichier gérant l'installation et désinstallation du plugin ATA Associations
+ * Fichier gérant l'installation et désinstallation du plugin ATA associations
  *
- * @plugin     ATA Associations
+ * @plugin     ATA associations
  * @copyright  2020
  * @author     christophe le drean
  * @licence    GNU/GPL v3
@@ -12,12 +12,10 @@
 if (!defined('_ECRIRE_INC_VERSION')) {
 	return;
 }
-
 include_spip('base/importer_spip_mots');
 include_spip('base/importer_spip_groupes_mots');
-
 /**
- * Fonction d'installation et de mise à jour du plugin ATA Associations.
+ * Fonction d'installation et de mise à jour du plugin ATA associations.
  *
  * @param string $nom_meta_base_version
  *     Nom de la meta informant de la version du schéma de données du plugin installé dans SPIP
@@ -43,7 +41,7 @@ function ata_associations_upgrade($nom_meta_base_version, $version_cible) {
 
 
 /**
- * Fonction de désinstallation du plugin ATA Associations.
+ * Fonction de désinstallation du plugin ATA associations.
  *
  * @param string $nom_meta_base_version
  *     Nom de la meta informant de la version du schéma de données du plugin installé dans SPIP
@@ -65,15 +63,13 @@ function ata_associations_vider_tables($nom_meta_base_version) {
 	sql_delete('spip_rezosocios_liens', sql_in('objet', array('association')));
 	sql_delete('spip_gis_liens', sql_in('objet', array('association')));
 	sql_delete('spip_territoires_liens', sql_in('objet', array('association')));
-
 	# Nettoyer les versionnages et forums
-	sql_delete('spip_versions', sql_in('objet', array('association')));
-	sql_delete('spip_versions_fragments', sql_in('objet', array('association')));
-	sql_delete('spip_forum', sql_in('objet', array('association')));
+	sql_delete('spip_versions', sql_in('objet', array('association', 'associations_imports_source', 'associations_import')));
+	sql_delete('spip_versions_fragments', sql_in('objet', array('association', 'associations_imports_source', 'associations_import')));
+	sql_delete('spip_forum', sql_in('objet', array('association', 'associations_imports_source', 'associations_import')));
 
 	effacer_meta($nom_meta_base_version);
 }
-
 
 function ata_associations_configurer_dependances() {
 	include_spip('inc/config');

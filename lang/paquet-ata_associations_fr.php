@@ -9,6 +9,6 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 
 	// A
 	'ata_associations_description' => '',
-	'ata_associations_nom' => 'ATA Associations',
+	'ata_associations_nom' => 'ATA associations',
 	'ata_associations_slogan' => '',
 );

@@ -1,8 +1,8 @@
 <?php
 /**
- * Définit les autorisations du plugin ATA Associations
+ * Définit les autorisations du plugin ATA associations
  *
- * @plugin     ATA Associations
+ * @plugin     ATA associations
  * @copyright  2020
  * @author     christophe le drean
  * @licence    GNU/GPL v3
@@ -51,7 +51,7 @@ function autoriser_associations_menu_dist($faire, $type, $id, $qui, $opt) {
  * @return bool          true s'il a le droit, false sinon
 **/
 function autoriser_association_creer_dist($faire, $type, $id, $qui, $opt) {
-	return in_array($qui['statut'], array('0minirezo', '1comite'));
+	return (in_array($qui['statut'], array('0minirezo', '1comite')) and sql_countsel('spip_rubriques')>0);
 }
 
 /**
@@ -96,6 +96,81 @@ function autoriser_association_supprimer_dist($faire, $type, $id, $qui, $opt) {
 	return $qui['statut'] == '0minirezo' and !$qui['restreint'];
 }
 
+/**
+ * Autorisation de créer l'élément (association) dans une rubrique
+ *
+ * @param  string $faire Action demandée
+ * @param  string $type  Type d'objet sur lequel appliquer l'action
+ * @param  int    $id    Identifiant de l'objet
+ * @param  array  $qui   Description de l'auteur demandant l'autorisation
+ * @param  array  $opt   Options de cette autorisation
+ * @return bool          true s'il a le droit, false sinon
+**/
+function autoriser_rubrique_creerassociationdans_dist($faire, $type, $id, $qui, $opt) {
+	return ($id and autoriser('voir', 'rubrique', $id) and autoriser('creer', 'association', $id));
+}
+
+// -----------------
+// Objet associations_imports_sources
+
+
+
+
+/**
+ * Autorisation de créer (associationsimportssource)
+ *
+ * @param  string $faire Action demandée
+ * @param  string $type  Type d'objet sur lequel appliquer l'action
+ * @param  int    $id    Identifiant de l'objet
+ * @param  array  $qui   Description de l'auteur demandant l'autorisation
+ * @param  array  $opt   Options de cette autorisation
+ * @return bool          true s'il a le droit, false sinon
+**/
+function autoriser_associationsimportssource_creer_dist($faire, $type, $id, $qui, $opt) {
+	return in_array($qui['statut'], array('0minirezo', '1comite'));
+}
+
+/**
+ * Autorisation de voir (associationsimportssource)
+ *
+ * @param  string $faire Action demandée
+ * @param  string $type  Type d'objet sur lequel appliquer l'action
+ * @param  int    $id    Identifiant de l'objet
+ * @param  array  $qui   Description de l'auteur demandant l'autorisation
+ * @param  array  $opt   Options de cette autorisation
+ * @return bool          true s'il a le droit, false sinon
+**/
+function autoriser_associationsimportssource_voir_dist($faire, $type, $id, $qui, $opt) {
+	return true;
+}
+
+/**
+ * Autorisation de modifier (associationsimportssource)
+ *
+ * @param  string $faire Action demandée
+ * @param  string $type  Type d'objet sur lequel appliquer l'action
+ * @param  int    $id    Identifiant de l'objet
+ * @param  array  $qui   Description de l'auteur demandant l'autorisation
+ * @param  array  $opt   Options de cette autorisation
+ * @return bool          true s'il a le droit, false sinon
+**/
+function autoriser_associationsimportssource_modifier_dist($faire, $type, $id, $qui, $opt) {
+	return in_array($qui['statut'], array('0minirezo', '1comite'));
+}
+
+/**
+ * Autorisation de supprimer (associationsimportssource)
+ *
+ * @param  string $faire Action demandée
+ * @param  string $type  Type d'objet sur lequel appliquer l'action
+ * @param  int    $id    Identifiant de l'objet
+ * @param  array  $qui   Description de l'auteur demandant l'autorisation
+ * @param  array  $opt   Options de cette autorisation
+ * @return bool          true s'il a le droit, false sinon
+**/
+function autoriser_associationsimportssource_supprimer_dist($faire, $type, $id, $qui, $opt) {
+	return $qui['statut'] == '0minirezo' and !$qui['restreint'];
+}
 
 
 // -----------------
@@ -115,7 +190,7 @@ function autoriser_association_supprimer_dist($faire, $type, $id, $qui, $opt) {
  * @return bool          true s'il a le droit, false sinon
 **/
 function autoriser_associationsimport_creer_dist($faire, $type, $id, $qui, $opt) {
-	return in_array($qui['statut'], array('0minirezo', '1comite'));
+	return (in_array($qui['statut'], array('0minirezo', '1comite')) and sql_countsel('spip_rubriques')>0);
 }
 
 /**

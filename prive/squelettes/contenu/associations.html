@@ -1,12 +1,8 @@
-[(#AUTORISER{voir,_associations}|sinon_interdire_acces)]
-<h1 class="grostitre">
-	<:association:titre_associations:/>
-</h1>
 #FORMULAIRE_RECHERCHE_ECRIRE{#SELF,ajax}
 <div class="nettoyeur"></div>
 
-<INCLURE{fond=prive/objets/liste/associations, nb=30, sinon=<:association:info_aucun_association:/>, env, ajax}>
+<INCLURE{fond=prive/objets/liste/associations, nb=30, env, ajax, sinon=<:association:info_aucun_association:>}>
 
-[(#AUTORISER{creer, association})
-	[(#URL_ECRIRE{association_edit, new=oui}|icone_verticale{<:association:icone_creer_association:/>, association, new, right})]
+[(#AUTORISER{creer,association})
+	[(#URL_ECRIRE{association_edit,new=oui}|icone_verticale{<:association:icone_creer_association:>,association,new,right})]
 ]

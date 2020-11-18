@@ -2,7 +2,7 @@
 /**
  * Déclarations relatives à la base de données
  *
- * @plugin     ATA Associations
+ * @plugin     ATA associations
  * @copyright  2020
  * @author     christophe le drean
  * @licence    GNU/GPL v3
@@ -49,6 +49,8 @@ function ata_associations_declarer_tables_objets_sql($tables) {
 		'principale' => 'oui',
 		'field'=> array(
 			'id_association'     => 'bigint(21) NOT NULL',
+			'id_rubrique'        => 'bigint(21) NOT NULL DEFAULT 0',
+			'id_secteur'         => 'bigint(21) NOT NULL DEFAULT 0',
 			'nom'                => 'text NOT NULL DEFAULT ""',
 			'membre_fraap'       => 'tinyint(1) NOT NULL DEFAULT 0',
 			'url_site'           => 'tinytext NOT NULL DEFAULT ""',
@@ -58,12 +60,14 @@ function ata_associations_declarer_tables_objets_sql($tables) {
 		),
 		'key' => array(
 			'PRIMARY KEY'        => 'id_association',
+			'KEY id_rubrique'    => 'id_rubrique',
+			'KEY id_secteur'     => 'id_secteur',
 			'KEY statut'         => 'statut',
 		),
 		'titre' => 'nom AS titre, "" AS lang',
 		'date' => 'date',
-		'champs_editables'  => array('nom', 'membre_fraap', 'url_site'),
-		'champs_versionnes' => array('url_site'),
+		'champs_editables'  => array('nom', 'membre_fraap', 'url_site', 'id_rubrique', 'id_secteur'),
+		'champs_versionnes' => array('membre_fraap', 'url_site', 'id_rubrique', 'id_secteur'),
 		'rechercher_champs' => array('nom' => 5, 'url_site' => 5),
 		'tables_jointures'  => array(),
 		'statut_textes_instituer' => array(
@@ -85,17 +89,13 @@ function ata_associations_declarer_tables_objets_sql($tables) {
 		'texte_changer_statut' => 'association:texte_changer_statut_association',
 	);
 
-	$tables['spip_associations_imports'] = array(
-
-	);
-
 	$tables['spip_associations_imports_sources'] = array(
 		'type' => 'associations_imports_source',
 		'principale' => 'oui',
 		'table_objet_surnoms' => array('associationsimportssource'),
 		'field'=> array(
 			'id_associations_imports_source' => 'bigint(21) NOT NULL',
-			'id_associations_import' => 'bigint(21) DEFAULT 0 NOT NULL',
+			'id_associations_import' => 'bigint(21) NOT NULL DEFAULT 0',
 			'nom'                => 'text NOT NULL DEFAULT ""',
 			'url_site'           => 'tinytext NOT NULL DEFAULT ""',
 			'membre_fraap'       => 'tinyint(1) NOT NULL DEFAULT 0',
@@ -112,12 +112,13 @@ function ata_associations_declarer_tables_objets_sql($tables) {
 			'formation'          => 'text NOT NULL DEFAULT ""',
 			'transmission'       => 'text NOT NULL DEFAULT ""',
 			'residences'         => 'text NOT NULL DEFAULT ""',
-			'statut' => 'tinyint(1) NOT NULL DEFAULT 0',
-			'publier' => 'tinyint(1) NOT NULL DEFAULT 0',
+			'statut'             => 'tinyint(1) NOT NULL DEFAULT 0',
+			'publier'            => 'tinyint(1) NOT NULL DEFAULT 0',
 			'maj'                => 'TIMESTAMP'
 		),
 		'key' => array(
 			'PRIMARY KEY'        => 'id_associations_imports_source',
+			'KEY statut'         => 'statut',
 		),
 		'titre' => 'nom AS titre, "" AS lang',
 		 #'date' => '',
@@ -133,29 +134,40 @@ function ata_associations_declarer_tables_objets_sql($tables) {
 		'table_objet_surnoms' => array('associationsimport'),
 		'field'=> array(
 			'id_associations_import' => 'bigint(21) NOT NULL',
-			'statut'             => 'varchar(20) DEFAULT "processing" NOT NULL',
+			'id_rubrique'        => 'bigint(21) NOT NULL DEFAULT 0',
+			'statut'             => 'varchar(20)  DEFAULT "processing" NOT NULL',
 			'total'              => 'bigint(21) NOT NULL DEFAULT 0',
 			'encours'            => 'bigint(21) NOT NULL DEFAULT 0',
-			'date_start' => "datetime NOT NULL DEFAULT '0000-00-00 00:00:00'",
+			'id_rubrique'        => 'bigint(21) NOT NULL DEFAULT 0',
+			'statut'             => 'varchar(20)  DEFAULT "0" NOT NULL',
 			'maj'                => 'TIMESTAMP'
 		),
 		'key' => array(
 			'PRIMARY KEY'        => 'id_associations_import',
+			'KEY id_rubrique'    => 'id_rubrique',
 			'KEY statut'         => 'statut',
 		),
 		'titre' => '"" AS titre, "" AS lang',
 		 #'date' => '',
-		'champs_editables'  => array(),
-		'champs_versionnes' => array(),
+		'champs_editables'  => array('id_rubrique'),
+		'champs_versionnes' => array('id_rubrique'),
 		'rechercher_champs' => array(),
 		'tables_jointures'  => array(),
 		'statut_textes_instituer' => array(
 			'processing'    => 'associations_import:texte_statut_processing',
-			'end'     => 'associations_import:texte_statut_end',
-			'pending'    => 'associations_import:texte_statut_pending',
+			'pending'     => 'associations_import:texte_statut_pending',
+			'end'   => 'associations_import:texte_statut_end',
+		),
+		'statut'=> array(
+			array(
+				'champ'     => 'statut',
+				'publie'    => 'processing',
+				'previsu'   => 'processing',
+				'post_date' => 'date',
+				'exception' => array('statut','tout')
+			)
 		),
 		'texte_changer_statut' => 'associations_import:texte_changer_statut_associations_import',
 	);
-
 	return $tables;
 }

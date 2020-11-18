@@ -8,7 +8,7 @@ if (!defined('_ECRIRE_INC_VERSION')) {
 $GLOBALS[$GLOBALS['idx_lang']] = array(
 
 	// A
-	'ata_associations_titre' => 'ATA Associations',
+	'ata_associations_titre' => 'ATA associations',
 
 	// C
 	'cfg_exemple' => 'Exemple',
