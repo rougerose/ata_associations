@@ -18,6 +18,7 @@ function inc_ata_importer_csv($donnees, $id_rubrique, $publier = 0) {
 			'encours' => 0,
 			'id_rubrique' => $id_rubrique,
 			'statut' => 'pending',
+			'date_start' => $now
 		);
 		$id_associations_import = objet_inserer('associations_imports', null, $infos_import);
 
