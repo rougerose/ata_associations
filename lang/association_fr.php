@@ -24,6 +24,9 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
 	'info_associations_auteur' => 'Les associations de cet auteur',
 	'info_aucun_association' => 'Aucune association',
 	'info_nb_associations' => '@nb@ associations',
+	'info_association_gis' => 'Gélocalisée ?',
+	'info_associations_toutes' => 'Toutes les associations',
+	'info_associations_sans_gis' => 'Associations sans géolocalisation',
 
 	// R
 	'retirer_lien_association' => 'Retirer cette association',

@@ -1,6 +1,10 @@
+[(#REM) <!-- Ne pas afficher les associations sans GIS si on le demande --> ]
+<BOUCLE_associations_avec_gis(ASSOCIATIONS){gis}{doublons}{si #ENV{gis}|=={non}}> </BOUCLE_associations_avec_gis>
+
 [(#SET{defaut_tri,#ARRAY{
 	nom,1,
 	date,-1,
+	gis,-1,
 	id_association,1,
 	points,-1
 }})]<B_liste_associations>
@@ -11,19 +15,21 @@
 	<thead>
 		<tr class="first_row">
 			<th class="picto" scope="col"></th>
-			<th class="statut" scope="col">[(#TRI{statut,<span title="<:lien_trier_statut|attribut_html:>">#</span>,ajax})]</th> 
+			<th class="statut" scope="col">[(#TRI{statut,<span title="<:lien_trier_statut|attribut_html:>">#</span>,ajax})]</th>
 			<th class="nom" scope="col">[(#TRI{nom,<:association:champ_nom_label:>,ajax})]</th>
-			<th class="date" scope="col">[(#TRI{date,<:date:>,ajax})]</th> 
+			<th class="gis" scope="col"><:association:info_association_gis:></th>
+			<th class="date" scope="col">[(#TRI{date,<:date:>,ajax})]</th>
 			<th class="id" scope="col">[(#TRI{id_association,<:info_numero_abbreviation:>,ajax})]</th>
 		</tr>
 	</thead>
 	<tbody>
-	<BOUCLE_liste_associations(ASSOCIATIONS){id_rubrique?}{id_secteur?}{id_mot?}{id_auteur?}{where?}{statut?}{recherche?}{tri #ENV{par,num nom},#GET{defaut_tri}}{par nom}{pagination #ENV{nb,10}}>
+	<BOUCLE_liste_associations(ASSOCIATIONS){id_rubrique?}{id_secteur?}{id_mot?}{id_auteur?}{where?}{statut?}{recherche?}{tri #ENV{par,num nom},#GET{defaut_tri}}{par nom}{pagination #ENV{nb,10}}{doublons}>
 		<tr class="[(#COMPTEUR_BOUCLE|alterner{row_odd,row_even})]">
 			<td class="picto">[(#CHEMIN_IMAGE{association-16.png}|balise_img)]</td>
-			<td class="statut">[(#STATUT|puce_statut{association,#ID_ASSOCIATION,#ID_RUBRIQUE})]</td> 
+			<td class="statut">[(#STATUT|puce_statut{association,#ID_ASSOCIATION,#ID_RUBRIQUE})]</td>
 			<td class="nom principale">[(#LOGO_ASSOCIATION|image_reduire{20,26})]<a href="[(#ID_ASSOCIATION|generer_url_entite{association})]" title="<:info_numero_abbreviation|attribut_html:> #ID_ASSOCIATION">[(#RANG). ]#NOM</a></td>
-			<td class="date secondaire">[(#DATE|affdate_jourcourt)]</td> 
+			<td class="gis secondaire"><BOUCLE_gis(ASSOCIATIONS){gis}{id_association}>[(#ID_GIS|oui)<span style='color:green'>Oui</span>]</BOUCLE_gis><span style='font-weight:bold;color:red'>Non</span><//B_gis></td>
+			<td class="date secondaire">[(#DATE|affdate_jourcourt)]</td>
 			<td class="id">[(#AUTORISER{modifier,association,#ID_ASSOCIATION}|?{
 				<a href="[(#URL_ECRIRE{association_edit,id_association=#ID_ASSOCIATION})]">#ID_ASSOCIATION</a>,
 				#ID_ASSOCIATION
