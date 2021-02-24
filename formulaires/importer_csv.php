@@ -16,7 +16,7 @@ function formulaires_importer_csv_saisies() {
 		return $saisies;
 	}
 
-	$rubriques = sql_allfetsel('id_rubrique, titre', 'spip_rubriques', '', 'titre ASC');
+	$rubriques = sql_allfetsel('id_rubrique, titre', 'spip_rubriques', '', '', 'titre ASC');
 	$t_rubriques = array();
 	foreach ($rubriques as $rubrique) {
 		$t_rubriques[$rubrique['id_rubrique']] = $rubrique['titre'];
