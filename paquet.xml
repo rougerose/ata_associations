@@ -27,6 +27,7 @@
 	<necessite nom="territoires" compatibilite="[1.0.1;]" />
 	<necessite nom="coordonnees" compatibilite="[3.0.4;]" />
 	<necessite nom="collectionjson" compatibilite="[1.2.0;]" />
+	<necessite nom="spip_bonux" compatibilite="[3.7.1;]" />
 
 	<pipeline nom="autoriser" inclure="ata_associations_autorisations.php" />
 

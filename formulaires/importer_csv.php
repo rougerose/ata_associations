@@ -106,8 +106,9 @@ function formulaires_importer_csv_traiter() {
 	$fichiers = _request('_fichiers');
 	$publier = _request('publier');
 	$id_rubrique = _request('id_rubrique');
+	$options = array('head' => true);
 	$importer_csv = charger_fonction('importer_csv', 'inc');
-	$donnees = $importer_csv($fichiers['csv'][0]['tmp_name'], true);
+	$donnees = $importer_csv($fichiers['csv'][0]['tmp_name'], $options);
 
 	$ata_importer_csv = charger_fonction('ata_importer_csv', 'inc');
 	$res = $ata_importer_csv($donnees, $id_rubrique, $publier);
