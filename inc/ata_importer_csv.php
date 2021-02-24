@@ -79,6 +79,8 @@ function inc_ata_importer_csv($donnees, $id_rubrique, $publier = 0) {
 					'facebook' => $asso['facebook'],
 					'twitter' => $asso['twitter'],
 					'instagram' => $asso['instagram'],
+					'lat' => $asso['lat'],
+					'lon' => $asso['lon'],
 					'statut' => 1,
 					'publier' => $publier,
 				);

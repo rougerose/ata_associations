@@ -105,7 +105,7 @@ function donnees_spip_mots() {
 		array('18', 'Organisme de formation professionnelle', '', '', '6', 'Formation et ressources', '2020-11-05 16:53:03', '1'),
 		array('19', 'Centre de documentation, bibliothèque', '', '', '6', 'Formation et ressources', '2020-11-05 16:53:17', '1'),
 		array('20', 'Espace d\'information personnalisée pour les artistes-auteurs', '', '', '6', 'Formation et ressources', '2020-11-05 16:53:38', '1'),
-		array('21', 'Aide administrative et à la professionalisation', '', '', '6', 'Formation et ressources', '2020-11-05 16:53:59', '1'),
+		array('21', 'Aide administrative et à la professionnalisation', '', '', '6', 'Formation et ressources', '2020-11-05 16:53:59', '1'),
 	);
 
 	return array($cles, $valeurs);

@@ -114,6 +114,8 @@ function ata_associations_declarer_tables_objets_sql($tables) {
 			'residences'         => 'text NOT NULL DEFAULT ""',
 			'statut'             => 'tinyint(1) NOT NULL DEFAULT 0',
 			'publier'            => 'tinyint(1) NOT NULL DEFAULT 0',
+			'lat' => 'double NULL NULL',
+			'lon' => 'double NULL NULL',
 			'maj'                => 'TIMESTAMP'
 		),
 		'key' => array(

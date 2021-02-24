@@ -122,7 +122,6 @@ function ata_importer_inserer_association($asso) {
 	} else {
 		//* Adresse
 		// adresse, adresse2, code_postal, ville
-		// TODO Ajouter Département et Région
 		$champs_adresse = array(
 			'titre' => $champs_asso['nom'],
 			'voie' => $asso['voie'] ? $asso['voie'] : '',
@@ -144,18 +143,31 @@ function ata_importer_inserer_association($asso) {
 		}
 
 		//* Géolocalisation
-		if (intval($id_adresse)) {
-			$champs_adresse_gis = $champs_adresse;
-			$champs_adresse_gis['pays'] = 'France';
+		// Utiliser les coordonnées déjà fournies
+		if ($asso['lat'] && $asso['lon']) {
+			$id_gis = gis_inserer();
+			$gis = array(
+				'titre' => $champs_adresse['titre'],
+				'lat' => $asso['lat'],
+				'lon' => $asso['lon'],
+				'zoom' => lire_config('gis/zoom')
+			);
 
-			$id_gis = ata_importer_inserer_gis($id_association, $champs_adresse_gis);
+			if (intval($id_gis)) {
+				gis_modifier($id_gis, $gis);
+				objet_associer(
+					array('gis' => $id_gis),
+					array('association' => $id_association)
+				);
+			}
+		} else {
+			// Sinon obtenir les coordonnées par le geocoder
+			if (intval($id_adresse)) {
+				$champs_adresse_gis = $champs_adresse;
+				$champs_adresse_gis['pays'] = 'France';
 
-			// if (intval($id_gis) == 0) {
-			// 	// spip_log(
-			// 	// 	'Association ' . $champs_asso['nom'] . ", id $id_association : géolocalisation impossible",
-			// 	// 	'ata_import_csv.' . _LOG_INFO_IMPORTANTE
-			// 	// );
-			// }
+				$id_gis = ata_importer_inserer_gis($id_association, $champs_adresse_gis);
+			}
 		}
 
 		//* Email
