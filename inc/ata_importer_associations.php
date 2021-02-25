@@ -134,10 +134,12 @@ function ata_importer_inserer_association($asso) {
 		$id_adresse = ata_importer_inserer_adresse($id_association, $champs_adresse);
 
 		//* Territoires
-		if (intval($id_adresse) and $champs_adresse['code_postal']) {
+		if (!empty($asso['departement']) or !empty($asso['region'])) {
 			$champs_territoires = array(
+				'code_postal' => $champs_adresse['code_postal'],
+				'departement' => $asso['departement'],
+				'region' => $asso['region'],
 				'pays' => _COORDONNEES_PAYS_DEFAUT, // FR
-				'code_postal' => $champs_adresse['code_postal']
 			);
 			ata_importer_inserer_territoires($id_association, $champs_territoires);
 		}
@@ -235,27 +237,51 @@ function ata_importer_inserer_adresse($id_association, $champs) {
 }
 
 function ata_importer_inserer_territoires($id_association, $champs) {
-	$iso_territoire = $champs['pays'] . '-' . substr($champs['code_postal'], 0, 2);
-	$departement = sql_allfetsel(
-		'id_territoire, iso_parent',
-		'spip_territoires',
-		'iso_territoire=' . sql_quote($iso_territoire)
-	);
-	if ($departement[0]['iso_parent']) {
-		$id_region = sql_getfetsel(
-			'id_territoire',
+	if (!empty($champs['departement'])) {
+		$nom = '<multi>[fr]%'.$champs['departement'].'</multi>';
+		$categorie = '%_department%';
+		$departement = sql_allfetsel(
+			'id_territoire, iso_parent',
 			'spip_territoires',
-			'iso_territoire=' . sql_quote($departement[0]['iso_parent'])
+			'iso_titre LIKE '.sql_quote($nom).' AND categorie LIKE '.sql_quote($categorie)
 		);
-		if (intval($id_region)) {
-			objet_associer(
-				array('territoire' => array($departement[0]['id_territoire'], $id_region)),
-				array('association' => $id_association)
+
+		if ($departement[0]['iso_parent']) {
+			$id_region = sql_getfetsel(
+				'id_territoire',
+				'spip_territoires',
+				'iso_territoire='.sql_quote($departement[0]['iso_parent'])
 			);
-		} else {
-			spip_log("id $id_association", 'ata_import_csv_territoires.' . _LOG_INFO_IMPORTANTE);
+
+			if (intval($id_region)) {
+				objet_associer(
+					array('territoire' => array($departement[0]['id_territoire'], $id_region)),
+					array('association' => $id_association)
+				);
+			}
 		}
 	}
+	// $iso_territoire = $champs['pays'] . '-' . substr($champs['code_postal'], 0, 2);
+	// $departement = sql_allfetsel(
+	// 	'id_territoire, iso_parent',
+	// 	'spip_territoires',
+	// 	'iso_territoire=' . sql_quote($iso_territoire)
+	// );
+	// if ($departement[0]['iso_parent']) {
+	// 	$id_region = sql_getfetsel(
+	// 		'id_territoire',
+	// 		'spip_territoires',
+	// 		'iso_territoire=' . sql_quote($departement[0]['iso_parent'])
+	// 	);
+	// 	if (intval($id_region)) {
+	// 		objet_associer(
+	// 			array('territoire' => array($departement[0]['id_territoire'], $id_region)),
+	// 			array('association' => $id_association)
+	// 		);
+	// 	} else {
+	// 		spip_log("id $id_association", 'ata_import_csv_territoires.' . _LOG_INFO_IMPORTANTE);
+	// 	}
+	// }
 }
 
 function ata_importer_inserer_email($id_association, $champs) {

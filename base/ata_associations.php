@@ -103,6 +103,8 @@ function ata_associations_declarer_tables_objets_sql($tables) {
 			'complement'         => 'tinytext NOT NULL DEFAULT ""',
 			'code_postal'        => 'varchar(40) NOT NULL DEFAULT ""',
 			'ville'              => 'tinytext NOT NULL DEFAULT ""',
+			'departement' => 'tinytext NOT NULL DEFAULT ""',
+			'region' => 'tinytext NOT NULL DEFAULT ""',
 			'email'              => 'varchar(255) NOT NULL DEFAULT ""',
 			'facebook'           => 'varchar(255) NOT NULL DEFAULT ""',
 			'instagram'          => 'varchar(255) NOT NULL DEFAULT ""',

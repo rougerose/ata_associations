@@ -66,6 +66,8 @@ function inc_ata_importer_csv($donnees, $id_rubrique, $publier = 0) {
 					$asso['membre_fraap'] = 0;
 				}
 
+				$departement = preg_replace('/\d+A?,?\s/i', '', $asso['departement']);
+
 				$association = array(
 					'id_associations_import' => $id_associations_import,
 					'nom' => $asso['nom'],
@@ -74,6 +76,8 @@ function inc_ata_importer_csv($donnees, $id_rubrique, $publier = 0) {
 					'complement' => $asso['adresse2'],
 					'code_postal' => $asso['code_postal'],
 					'ville' => $asso['ville'],
+					'departement' => $departement,
+					'region' => $asso['region'],
 					'url_site' => $asso['site_internet'],
 					'email' => $asso['email1'],
 					'facebook' => $asso['facebook'],
@@ -86,10 +90,10 @@ function inc_ata_importer_csv($donnees, $id_rubrique, $publier = 0) {
 				);
 
 				$activites = array(
-					'creation' => $asso['activites_creation'],
-					'diffusion' => $asso['activites_diffusion'],
-					'formation' => $asso['activites_formation_ressources'],
-					'transmission' => $asso['activites_transmission'],
+					'creation' => $asso['creation'],
+					'diffusion' => $asso['diffusion'],
+					'formation' => $asso['formation'],
+					'transmission' => $asso['transmission'],
 					'residences' => $asso['residences']
 				);
 
