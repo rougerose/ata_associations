@@ -2,7 +2,7 @@
 	prefix="ata_associations"
 	categorie="divers"
 	version="1.0.1"
-	etat="dev"
+	etat="stable"
 	compatibilite="[3.3.0-dev;3.3.*]"
 	logo="prive/themes/spip/images/ata_associations-64.png"
 	documentation=""
