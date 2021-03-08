@@ -1,0 +1,56 @@
+[(#AUTORISER{voir,association,#ID_ASSOCIATION}|sinon_interdire_acces)]
+[(#SET{url_voir,#VAL{association}|objet_info{url_voir}})]
+[(#SET{url_edit,#VAL{association}|objet_info{url_edit}})]
+<BOUCLE_association(ASSOCIATIONS){id_association}{statut==.*}{si #ENV{exec}|=={#GET{url_voir}}}>
+[(#BOITE_OUVRIR{[
+	[(#AUTORISER{modifier,association,#ID_ASSOCIATION})
+		[(#ID_ASSOCIATION|afficher_qui_edite{association}|non)
+			[(#URL_ECRIRE{#GET{url_edit},id_association=#ID_ASSOCIATION}|icone_verticale{<:association:icone_modifier_association:>,association,edit,right ajax preload})]
+		]
+		[(#ID_ASSOCIATION|afficher_qui_edite{association}|oui)
+			[(#URL_ECRIRE{#GET{url_edit},id_association=#ID_ASSOCIATION}|icone_verticale{#ID_ASSOCIATION|afficher_qui_edite{association},warning-24,'',right edition_deja ajax preload})]
+		]
+	]
+
+	<h1>[(#RANG). ](#NOM|sinon{<:info_sans_titre:>})[(#CHEMIN_IMAGE{association-24.png}|balise_img{association,cadre-icone})]</h1>
+
+],simple fiche_objet})]
+
+<div class="ajax">
+	#FORMULAIRE_DATER{association,#ID_ASSOCIATION}
+</div>
+
+<!--affiche_milieu-->
+
+<div id="wysiwyg">
+<INCLURE{fond=prive/objets/contenu/association,id=#ID_ASSOCIATION,id_association=#ID_ASSOCIATION,virtuel=oui,ajax=wysiwyg,wysiwyg=1}>
+</div>
+
+<div class="nettoyeur"></div>
+
+[(#AUTORISER{modifier,association,#ID_ASSOCIATION})
+	[(#ID_ASSOCIATION|afficher_qui_edite{association}|non)
+		[(#URL_ECRIRE{#GET{url_edit},id_association=#ID_ASSOCIATION}|icone_verticale{<:association:icone_modifier_association:>,association,edit,right ajax preload})]
+	]
+	[(#ID_ASSOCIATION|afficher_qui_edite{association}|oui)
+		[(#URL_ECRIRE{#GET{url_edit},id_association=#ID_ASSOCIATION}|icone_verticale{#ID_ASSOCIATION|afficher_qui_edite{association},warning-24,'',right edition_deja ajax preload})]
+	]
+]
+
+#PIPELINE{afficher_complement_objet,#ARRAY{args,#ARRAY{type,association,id,#ID_ASSOCIATION},data,'<div class="nettoyeur"></div>'}}
+
+#BOITE_FERMER
+
+
+#SET{enfants,''}
+[(#VAL{prive/objets/contenu/association-enfants}|trouver_fond|oui)
+	[(#SET{enfants,[(#INCLURE{fond=prive/objets/contenu/association-enfants,id_association,env})]})]
+]
+[(#PIPELINE{affiche_enfants,[(#ARRAY{args,#ARRAY{exec,association,id_association,#ID_ASSOCIATION,objet,association,id_objet,#ID_ASSOCIATION},data,#GET{enfants}})]})]
+
+[(#EVAL{_AJAX}|oui)
+	<script type="text/javascript">/*<!\\[CDATA\\[*/reloadExecPage('#ENV{exec}','#navigation,#chemin,#extra');/*\\]\\]>*/</script>
+]
+</BOUCLE_association>
+[(#ENV**{exec}|=={#GET{url_edit}}|?{#INCLURE{fond=prive/squelettes/contenu/#GET{url_edit},redirect='',env,retourajax=oui},#REM|sinon_interdire_acces})]
+<//B_association>

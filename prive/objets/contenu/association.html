@@ -1,0 +1,17 @@
+<BOUCLE_association(ASSOCIATIONS){id_association}{statut?}>
+[<div class="champ contenu_nom[ (#NOM*|strlen|?{'',vide})]">
+	<label><:association:champ_nom_label:> : </label>
+	<span dir="#LANG_DIR" class="#EDIT{nom} nom">(#NOM)</span>
+</div>]
+
+[<div class="champ contenu_membre_fraap[ (#MEMBRE_FRAAP*|strlen|?{'',vide})]">
+	<label><:association:champ_membre_fraap_label:> : </label>
+	<span dir="#LANG_DIR" class="#EDIT{membre_fraap} membre_fraap">(#MEMBRE_FRAAP|=={1}|?{Oui, Non})</span>
+</div>]
+
+[<div class="champ contenu_url_site[ (#URL_SITE*|strlen|?{'',vide})]">
+	<label><:association:champ_url_site_label:> : </label>
+	<span dir="#LANG_DIR" class="#EDIT{url_site} url_site"><a href="#URL_SITE">(#URL_SITE)</a></span>
+</div>]
+
+</BOUCLE_association>

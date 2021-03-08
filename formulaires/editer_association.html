@@ -1,0 +1,36 @@
+<div class='formulaire_spip formulaire_editer formulaire_#FORM formulaire_#FORM-#ENV{id_association,nouveau}'>
+	[<p class="reponse_formulaire reponse_formulaire_ok">(#ENV**{message_ok})</p>]
+	[<p class="reponse_formulaire reponse_formulaire_erreur">(#ENV*{message_erreur})</p>]
+
+	[(#ENV{editable})
+	<form method="post" action="#ENV{action}"><div>
+		#ACTION_FORMULAIRE{#ENV{action}}
+		<input type="hidden" name="id_association" value="#ENV{id_association}" />
+		<div class="editer-groupe">
+
+			[(#SAISIE{input, nom, obligatoire=oui,
+				label=<:association:champ_nom_label:>})]
+
+			[<div class="editer editer_rubrique[ (#ENV**{erreurs/id_parent}|oui)erreur]">
+					<label for="id_parent"><:titre_cadre_interieur_rubrique:></label>[
+					<span class="erreur_message">(#ENV**{erreurs/id_parent})</span>
+					]
+					(#VAL|chercher_rubrique{#ENV{id_association},#ENV{id_parent},'association',#ENV{id_secteur},'',0,form_simple})
+			</div>]
+
+
+
+			[(#SAISIE{radio, membre_fraap,
+				label=<:association:champ_membre_fraap_label:>,
+				datas=[(#ARRAY{1, Oui, 0, Non})]})]
+
+			[(#SAISIE{input, url_site,
+				label=<:association:champ_url_site_label:>})]
+
+		</div>
+		[(#REM) ajouter les saisies supplementaires : extra et autre, a cet endroit ]
+		<!--extra-->
+		<p class="boutons"><input type="submit" class="submit" value="<:bouton_enregistrer:>" /></p>
+	</div></form>
+	]
+</div>

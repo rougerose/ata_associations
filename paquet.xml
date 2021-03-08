@@ -1,0 +1,43 @@
+<paquet
+	prefix="ata_associations"
+	categorie="divers"
+	version="1.0.1"
+	etat="stable"
+	compatibilite="[3.3.0-dev;3.3.*]"
+	logo="prive/themes/spip/images/ata_associations-64.png"
+	documentation=""
+	schema="1.0.1"
+>
+	<!--
+		Paquet généré le 2020-11-18 12:35:48
+	-->
+
+	<nom>ATA associations</nom>
+
+
+	<auteur lien='https://rouge-rose.net'>christophe le drean</auteur>
+
+	<licence>GNU/GPL v3</licence>
+	<necessite nom="saisies" compatibilite="[3.23.2;]" />
+	<necessite nom="verifier" compatibilite="[1.11.1;]" />
+	<necessite nom="cvtupload" compatibilite="[1.20.5;]" />
+	<necessite nom="gis" compatibilite="[4.49.2;]" />
+	<necessite nom="gma" compatibilite="[1.2.11;]" />
+	<necessite nom="rezosocios" compatibilite="[1.0.2;]" />
+	<necessite nom="territoires" compatibilite="[1.0.1;]" />
+	<necessite nom="coordonnees" compatibilite="[3.0.4;]" />
+	<necessite nom="collectionjson" compatibilite="[1.2.0;]" />
+	<necessite nom="spip_bonux" compatibilite="[3.7.1;]" />
+
+	<pipeline nom="autoriser" inclure="ata_associations_autorisations.php" />
+
+	<pipeline nom="declarer_tables_objets_sql" inclure="base/ata_associations.php" />
+	<pipeline nom="declarer_tables_interfaces" inclure="base/ata_associations.php" />
+	<pipeline nom="affiche_enfants" inclure="ata_associations_pipelines.php" />
+	<pipeline nom="boite_infos" inclure="ata_associations_pipelines.php" />
+	<pipeline nom="objet_compte_enfants" inclure="ata_associations_pipelines.php" />
+	<pipeline nom="optimiser_base_disparus" inclure="ata_associations_pipelines.php" />
+	<pipeline nom="trig_propager_les_secteurs" inclure="ata_associations_pipelines.php" />
+
+	<menu nom="associations" titre="association:titre_associations" parent="menu_edition" icone="images/association-16.png" action="associations" />
+</paquet>

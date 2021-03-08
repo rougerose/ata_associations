@@ -1,0 +1,9 @@
+<div class="onglets_simple">
+	<ul>
+		<li>[(#SELF|parametre_url{gis, ''}|lien_ou_expose{<:association:info_associations_toutes:>, #ENV{gis, ''}|=={''}, ajax})]</li>
+		<li>[(#SELF|parametre_url{gis, non}|lien_ou_expose{<:association:info_associations_sans_gis:>, #ENV{gis}|=={non}, ajax})]</li>
+	</ul>
+	<div class='nettoyeur'></div>
+</div>
+
+<INCLURE{fond=prive/objets/liste/associations, nb=30, env, ajax, sinon=<:association:info_aucun_association:>} />

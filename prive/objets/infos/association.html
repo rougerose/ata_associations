@@ -1,0 +1,30 @@
+<BOUCLE_association(ASSOCIATIONS){id_association=#ENV{id}}{statut?}>
+<div class="infos">
+[(#SET{texte_objet,<:association:titre_association:>})]
+<div class="numero"><:titre_cadre_numero_objet{objet=#GET{texte_objet}}:><p>#ID_ASSOCIATION</p></div>
+
+[(#FORMULAIRE_INSTITUER_OBJET{associations,#ID_ASSOCIATION})]
+
+<div class='nb_elements'><!--nb_elements--></div>
+
+[(#REM)
+
+	Bouton voir en ligne
+
+]
+<BOUCLE_publie(ASSOCIATIONS){id_association}>
+	[(#VAL{redirect}
+		|generer_url_action{type=associations&id=#ID_ASSOCIATION}
+		|parametre_url{var_mode,calcul}
+		|icone_horizontale{<:icone_voir_en_ligne:>,racine})]
+</BOUCLE_publie>
+	[(#AUTORISER{previsualiser,associations,#ID_ASSOCIATION,'',#ARRAY{statut,#STATUT}})
+		[(#VAL{redirect}
+			|generer_url_action{type=associations&id=#ID_ASSOCIATION}
+			|parametre_url{var_mode,preview}
+			|icone_horizontale{<:previsualiser:>,preview})]
+	]
+<//B_publie>
+
+</div>
+</BOUCLE_association>
