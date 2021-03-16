@@ -26,7 +26,6 @@ function ata_associations_affiche_enfants($flux) {
 		$id_objet = $flux['args']['id_objet'];
 
 		if ($e['type'] == 'rubrique') {
-
 			$flux['data'] .= recuperer_fond(
 				'prive/objets/liste/associations',
 				array(
@@ -45,7 +44,6 @@ function ata_associations_affiche_enfants($flux) {
 					'right'
 				) . "<br class='nettoyeur' />";
 			}
-
 		}
 	}
 	return $flux;
@@ -136,6 +134,49 @@ function ata_associations_trig_propager_les_secteurs($flux) {
 	while ($row = sql_fetch($r)) {
 		sql_update('spip_associations', array('id_secteur' => $row['secteur']), 'id_association=' . $row['id']);
 	}
+
+	return $flux;
+}
+
+/**
+ * Modifier les saisies adresse/email/téléphone :
+ *  - suppression du titre
+ *  - type "professionnel" par défaut
+ *
+ * @param  array $flux Le flux du pipeline
+ * @return array       Le flux modifié
+ */
+function ata_associations_formulaire_saisies($flux) {
+	$forms = array('editer_adresse', 'editer_email', 'editer_numero');
+
+	if (in_array($flux['args']['form'], $forms)) {
+		include_spip('inc/saisies');
+		$flux['data'] = saisies_supprimer($flux['data'], 'titre');
+		$flux['data'] = saisies_modifier(
+			$flux['data'],
+			'type',
+			array('options' => array('defaut' => _COORDONNEES_TYPE_DEFAUT))
+		);
+	}
+	return $flux;
+}
+
+/**
+ * Réduire la liste des réseaux sociaux à (facebook, twitter, instagram)
+ * qui seront les seuls pris en compte dans les exports json des associations.
+ *
+ * Utilise le pipeline du plugin rezosocios
+ *
+ * @param  array $flux
+ * @return array
+ */
+function ata_associations_rezosocios_liste($flux) {
+	$rezos = array(
+		'facebook' => $flux['facebook'],
+		'twitter' => $flux['twitter'],
+		'instagram' => $flux['instagram']
+	);
+	$flux = $rezos;
 
 	return $flux;
 }
