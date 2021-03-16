@@ -34,7 +34,7 @@ function ata_importer_activites_get_titre_court($titre_long) {
 		'mediation', // => "Médiation - visites d'exposition",
 		'commissariat', // => "Commissariat d'exposition",
 		'artotheque', // => "Artothèque-collection d'oeuvres",
-		'formation', // => 'Organisme de formation',
+		'organisme', // => 'Organisme de formation',
 		'bibliotheque', // => 'Centre de doc-bibliothèque',
 		'information', // => "Espace d'information personnalisée",
 		'admin', // => 'Aide admin et à la proflisation',
