@@ -1,7 +1,7 @@
 <paquet
 	prefix="ata_associations"
 	categorie="divers"
-	version="1.0.3"
+	version="1.0.4"
 	etat="stable"
 	compatibilite="[3.3.0-dev;3.3.*]"
 	logo="prive/themes/spip/images/ata_associations-64.png"
@@ -17,7 +17,7 @@
 
 	<auteur lien='https://rouge-rose.net'>christophe le drean</auteur>
 
-	<licence>GNU/GPL v3</licence>
+	<licence>CC-BY-NC-ND-4.0</licence>
 	<necessite nom="saisies" compatibilite="[3.23.2;]" />
 	<necessite nom="verifier" compatibilite="[1.11.1;]" />
 	<necessite nom="cvtupload" compatibilite="[1.20.5;]" />
