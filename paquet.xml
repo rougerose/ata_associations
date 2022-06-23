@@ -1,9 +1,9 @@
 <paquet
 	prefix="ata_associations"
 	categorie="divers"
-	version="1.0.6"
+	version="1.0.7"
 	etat="stable"
-	compatibilite="[4.0.0;4.99.*]"
+	compatibilite="[4.0.0;4.1.*]"
 	logo="prive/themes/spip/images/ata_associations-64.png"
 	documentation=""
 	schema="1.0.1"
