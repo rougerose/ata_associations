@@ -1,7 +1,9 @@
 .DS_Store
 .vscode
+
 node_modules/
-yarn.*
-yarn-error.log
+vendor/
+
+
 *.diff
 fabrique_ata_associations.php

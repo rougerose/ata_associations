@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Options au chargement du plugin ATA Associations
  *
@@ -19,9 +20,10 @@ if (!defined('_DIR_IMPORTS_ATA')) {
 }
 
 // Type de coordonnées par défaut
-if (!defined('_COORDONNEES_TYPE_DEFAUT')) {
-	define('_COORDONNEES_TYPE_DEFAUT', 'work');
-}
+// 2025-07-07 : la constante n'est plus utilisée
+// if (!defined('_COORDONNEES_TYPE_DEFAUT')) {
+// 	define('_COORDONNEES_TYPE_DEFAUT', 'work');
+// }
 
 // Pays par défaut (en principe défini par Coordonnees)
 if (!defined('_COORDONNEES_PAYS_DEFAUT')) {
